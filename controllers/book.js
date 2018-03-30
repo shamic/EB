@@ -5,52 +5,43 @@ const APIError = require('../rest').APIError;
 
 module.exports = {
     'GET /api/books': async (ctx, next) => {
-        ctx.rest({
-            books: Books.findAll()
-        });
+        var books = await Books.findAll({limit: 10, order: 'id asc'});
+        console.log(`find ${books.length} books:`);
+        for (let book of books) {
+            console.log(JSON.stringify(book));
+        }
+        if (books) {
+            ctx.rest({
+                books: books
+            });
+        } else {
+            throw new APIError('books:not_found', 'books not found.');
+        }
     },
 
     'POST /api/books': async (ctx, next) => {
-        var p = products.createProduct(
-            ctx.request.body.name, 
-            ctx.request.body.author, 
-            ctx.request.body.category, 
-            ctx.request.body.publisher, 
-            ctx.request.body.publisher_date, 
-            parseInt(ctx.request.body.words_num), 
-            ctx.request.body.introduction,
-            // ctx.request.body.thumbnail_url,
-            // ctx.request.body.audio_url,
-            // ctx.request.body.txt_url,
-            parseInt(ctx.request.body.visits), 
-            parseFloat(ctx.request.body.price),
-            parseFloat(ctx.request.body.was_price),
-            parseFloat(ctx.request.body.rating)
-        );
-        ctx.rest(p);
+        // TODO: param check
+        var book = await Books.create({
+            name: ctx.request.body.name, 
+            author: ctx.request.body.author, 
+            category: ctx.request.body.category, 
+            publisher: ctx.request.body.publisher, 
+            publisher_date: ctx.request.body.publisher_date, 
+            words_num: parseInt(ctx.request.body.words_num), 
+            introduction: ctx.request.body.introduction,
+            //thumbnail_url:  ctx.request.body.thumbnail_url,
+            //audio_url:  ctx.request.body.audio_url,
+            //txt_url:  ctx.request.body.txt_url,
+            visits: parseInt(ctx.request.body.visits), 
+            price: parseFloat(ctx.request.body.price),
+            was_price: parseFloat(ctx.request.body.was_price),
+            rating: parseFloat(ctx.request.body.rating)
+        });
+        if (book) {
+            console.log('created: ' + JSON.stringify(book));
+            ctx.rest(book);
+        } else {
+            throw new APIError('book created:fail', 'create book fail.');
+        }
     },
 }
-
-// (async () => {
-//     var user = await User.create({
-//         name: 'John',
-//         gender: false,
-//         email: 'john-' + Date.now() + '@garfield.pet',
-//         passwd: 'hahaha'
-//     });
-//     console.log('created: ' + JSON.stringify(user));
-//     var cat = await Pet.create({
-//         ownerId: user.id,
-//         name: 'Garfield',
-//         gender: false,
-//         birth: '2007-07-07',
-//     });
-//     console.log('created: ' + JSON.stringify(cat));
-//     var dog = await Pet.create({
-//         ownerId: user.id,
-//         name: 'Odie',
-//         gender: false,
-//         birth: '2008-08-08',
-//     });
-//     console.log('created: ' + JSON.stringify(dog));
-// })();
