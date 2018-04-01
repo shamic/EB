@@ -5,13 +5,13 @@ const APIError = require('../rest').APIError;
 module.exports = {
     'GET /api/products': async (ctx, next) => {
         ctx.rest({
-            products: products.getProducts()
+            data: products.getProducts()
         });
     },
 
     'POST /api/products': async (ctx, next) => {
         var p = products.createProduct(ctx.request.body.name, ctx.request.body.manufacturer, parseFloat(ctx.request.body.price));
-        ctx.rest(p);
+        ctx.rest({data: p});
     },
 
     'DELETE /api/products/:id': async (ctx, next) => {
@@ -22,5 +22,7 @@ module.exports = {
         } else {
             throw new APIError('product:not_found', 'product not found by id.');
         }
-    }
+    },
+
+    // 'POST /api/'
 };

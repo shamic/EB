@@ -33,8 +33,8 @@ $(function () {
         }
     });
 
-    $.getJSON('/api/products').done(function (data) {
-        vm.products = data.products;
+    $.getJSON('/api/products').done(function (res) {
+        vm.products = res.data;
     }).fail(function (jqXHR, textStatus) {
         alert('Error: ' + jqXHR.status);
     });
@@ -55,7 +55,7 @@ $(function () {
             url: '/api/products',
             data: JSON.stringify(product)
         }).done(function (r) {
-            vm.products.push(r);
+            vm.products.push(r.data);
         }).fail(function (jqXHR, textStatus) {
             // Not 200:
             alert('Error: ' + jqXHR.status);

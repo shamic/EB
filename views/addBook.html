@@ -1,5 +1,9 @@
 {% extends "base.html" %} {% block main %}
 
+<link rel="stylesheet" href="/static/css/fileinput.css">
+<script src="/static/js/fileinput.js"></script>
+<script src="/static/js/locales/zh.js"></script>
+
 <script>
 
     $(function () {
@@ -34,39 +38,131 @@
             }
         });
 
-        $.getJSON('/api/products').done(function (data) {
-            vm.products = data.products;
-        }).fail(function (jqXHR, textStatus) {
-            alert('Error: ' + jqXHR.status);
-        });
-        $.getJSON('/api/books').done(function (data) {
-            vm.books = data.books;
+        $.getJSON('/api/books').done(function (res) {
+            vm.books = res.data;
         }).fail(function (jqXHR, textStatus) {
             alert('Error: ' + jqXHR.status);
         });
 
         $('#product-form').submit(function (e) {
-            // e.preventDefault();
-            // var
-            //     product = {
-            //         name: $(this).find('input[name=name]').val(),
-            //         manufacturer: $(this).find('input[name=manufacturer]').val(),
-            //         price: parseFloat($(this).find('input[name=price]').val())
-            //     };
-            // // AJAX提交JSON:
-            // $.ajax({
-            //     type: 'post',
-            //     dataType: 'json',
-            //     contentType: 'application/json',
-            //     url: '/api/products',
-            //     data: JSON.stringify(product)
-            // }).done(function (r) {
-            //     vm.products.push(r);
-            // }).fail(function (jqXHR, textStatus) {
-            //     // Not 200:
-            //     alert('Error: ' + jqXHR.status);
-            // });
+            e.preventDefault();
+            if ($('#category').val() == 'Choose...') {
+                $('#myModel').modal('show');
+                $('#myModel').find('.modal-body').text('请选择分类');
+            } else {
+                var
+                    book = {
+                        name: $(this).find('input[name=name]').val(),
+                        author: $(this).find('input[name=author]').val(),
+                        introduction: $('#introduction').val(),
+                        category: $('#category').val()
+                    };
+                // AJAX提交JSON:
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    url: '/api/books',
+                    data: JSON.stringify(book)
+                }).done(function (r) {
+                    r.data.thumbnail_url = r.data.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
+                    vm.books.unshift(r.data);
+                    $(":input", "#product-form")
+                        .not(":button", ":reset", "hidden", "submit")
+                        .val("")
+                        .removeAttr("checked")
+                        .removeAttr("selected");
+                }).fail(function (jqXHR, textStatus) {
+                    // Not 200:
+                    alert('Error: ' + jqXHR.status);
+                });
+            }
         });
+
+        $('#txtFile').fileinput({
+            showUpload: false,
+            previewFileType: 'any',
+            showPreview: false,
+            language: 'zh',
+            browseLabel: 'Txt file',
+            browseClass: 'btn btn-default',
+            allowedFileTypes: ['text'], // 限制文件类型为图片
+            allowedFileExtensions: ['text'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
+            maxFileCount: 1,  // 限制最多3张图片
+            // maxFileSize: 1024, // 限制图片大小，最大1024KB
+            // allowedPreviewTypes: ['image'], // 允许预览的文件类型
+            initialCaption: '添加图书txt文件', // 初始化说明框框，比如该项目上默认显示：可以选择最多3张图片，格式为png或者jpg，大小不超过1M
+            layoutTemplates: {
+                main1: '{preview}\n' +
+                    '<div class="input-group {class}">\n' +
+                    '   <div class="input-group-btn">\n' +
+                    '       {browse}\n' +
+                    '       {remove}\n' +
+                    '   </div>\n' +
+                    '   {caption}\n' +
+                    '</div>',
+                footer: '<div class="file-thumbnail-footer">\n' +
+                    '    <div class="file-caption-name">{caption}{size}</div>\n' +
+                    '</div>'
+            }
+        });
+
+        $('#thumbnail').fileinput({
+            showUpload: false,
+            previewFileType: 'any',
+            showPreview: false,
+            language: 'zh',
+            browseLabel: 'Cover image',
+            browseClass: 'btn btn-default',
+            allowedFileTypes: ['image'], // 限制文件类型为图片
+            allowedFileExtensions: ['image'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
+            maxFileCount: 1,  // 限制最多3张图片
+            // maxFileSize: 1024, // 限制图片大小，最大1024KB
+            // allowedPreviewTypes: ['image'], // 允许预览的文件类型
+            initialCaption: '添加图书图片', // 初始化说明框框，比如该项目上默认显示：可以选择最多3张图片，格式为png或者jpg，大小不超过1M
+            layoutTemplates: {
+                main1: '{preview}\n' +
+                    '<div class="input-group {class}">\n' +
+                    '   <div class="input-group-btn">\n' +
+                    '       {browse}\n' +
+                    '       {remove}\n' +
+                    '   </div>\n' +
+                    '   {caption}\n' +
+                    '</div>',
+                footer: '<div class="file-thumbnail-footer">\n' +
+                    '    <div class="file-caption-name">{caption}{size}</div>\n' +
+                    '</div>'
+            }
+        });
+
+        // $("#txtFile").on("change", function () {
+        //     // var filePath = $(this).val();         //获取到input的value，里面是文件的路径  
+        //     var file = $('#txtFile')["0"].files;    //获取上传的文件  
+        //     var fileName = file[0].name;
+        //     var fileSize = (file[0].size / 1024).toFixed(2);
+        //     // 获取文件的格式为.txt 
+        //     var fileFormat = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+        //     if (checkFileFormat(fileFormat) == false) {
+        //         console.log("上传的文件类型有误！");
+        //         $('#myModel').modal('show');
+        //         $('#myModel').find('.modal-body').text('上传的文件类型有误！(支持格式：txt)');
+        //         return;
+        //     }
+        //     // 文件大小不超过200KB；  
+        //     // if (fileSize > 200) {
+        //     //     console.log("上传的文件太大了！");
+        //     //     return;
+        //     // }
+
+        // });
+
+        // // 校验文件格式  
+        // function checkFileFormat(format) {
+        //     if (format.match(/.txt/)) {
+        //         return true;
+        //     }
+        //     return false;
+        // }
     });
 </script>
 
@@ -82,12 +178,12 @@
                     <form id="product-form">
                         <div class="form-group">
                             <label>Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Book name" value="">
+                            <input type="text" name="name" class="form-control" placeholder="Book name" value="" required>
                             <p class="help-block">Book name</p>
                         </div>
                         <div class="form-group">
                             <label>Author</label>
-                            <input type="text" name="author" class="form-control" placeholder="Book author" value="">
+                            <input type="text" name="author" class="form-control" placeholder="Book author" value="" required>
                             <p class="help-block">author</p>
                         </div>
                         <div class="form-group">
@@ -104,17 +200,17 @@
                         </div>
                         <div class="form-group">
                             <label for="thumbnail">Cover image</label>
-                            <input type="file" class="form-control-file" id="thumbnail">
+                            <input type="file" class="form-control-file" id="thumbnail" accept="image/*">
                             <p class="help-block">thumbnail</p>
                         </div>
                         <div class="form-group">
                             <label for="txtFile">Txt file</label>
-                            <input type="file" class="form-control-file" id="txtFile">
+                            <input type="file" class="form-control-file" id="txtFile" accept=".txt">
                             <p class="help-block">txt file</p>
                         </div>
                         <div class="form-group">
                             <label>Introduction</label>
-                            <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3"></textarea>
+                            <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3" required></textarea>
                             <p class="help-block">introduction</p>
                         </div>
                         <div class="form-group">
@@ -136,30 +232,30 @@
                 <table id="product-list" class="table table-hover">
                     <thead>
                         <tr>
-                            <th style="width:100px"></th>
-                            <th>Books</th>
-                            <th style="width:150px">Rating</th>
+                            <th style="width:150px;border-bottom: 0;">Corer Image</th>
+                            <th style="border-bottom: 0;">Books</th>
+                            <th style="width:100px;border-bottom: 0;">Rating</th>
                             <!-- <th style="width:50px"></th> -->
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="p in books">
-                            <td>
-                                <img class="media-object" style="width:40px; height:40px;" src="/static/images/icon.png">
+                            <td style="position: relative;">
+                                <img class="media-object" style="width:100px; height:135px;position: absolute;top: 50%;transform: translateY(-50%);" v-bind:src="p.thumbnail_url">
                             </td>
                             <td>
                                 <h4 class="media-heading" v-text="p.name"></h4>
                                 <p>
-                                    <span v-text="p.category"></span>
+                                    <span v-text="p.author"></span>
                                     <span>|</span>
-                                    <span v-text="p.author">
+                                    <span v-text="p.category">
                                 </p>
                                 <p v-text="p.introduction" style="color:silver;"></p>
                             </td>
-                            <td>
-                                <p style="font-size:2em; color:red;">
+                            <td style="position: relative;">
+                                <p style="font-size:2em; color:red;height:auto;position: absolute;top: 50%;transform: translateY(-50%);">
                                     <span v-text="p.rating"></span>
-                                    <span style="font-size:1em;">分</span>
+                                    <span v-if="p.rating" style="font-size:14px;">分
                                 </p>
                             </td>
                             <td>
@@ -171,45 +267,25 @@
             </div>
         </div>
     </div>
-    <!-- <div class="row">
-        <div class="col-md-12">
-            <h1>Get more courses...</h1>
+    <!-- Modal -->
+    <div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Tips</h5>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> -->
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">JavaScript</h3>
-                </div>
-                <div class="panel-body">
-                    <p>full-stack JavaScript course</p>
-                    <p><a target="_blank" href="http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000">Read more</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Python</h3>
-                </div>
-                <div class="panel-body">
-                    <p>the latest Python course</p>
-                    <p><a target="_blank" href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000">Read more</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">git</h3>
-                </div>
-                <div class="panel-body">
-                    <p>A course about git version control</p>
-                    <p><a target="_blank" href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">Read more</a></p>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </div>
 {% endblock %}

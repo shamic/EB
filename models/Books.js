@@ -4,8 +4,12 @@ module.exports = db.defineModel('books', {
     name: db.STRING(100),
     author: db.STRING(20),
     category: db.STRING(10),
-    txt_url: db.STRING(200),
     introduction: db.STRING(200),
+
+    txt_url: {
+        type: db.STRING(100),
+        allowNull: true
+    },
 
     words_num: {
         type: db.BIGINT,
@@ -62,5 +66,8 @@ module.exports = db.defineModel('books', {
 //      price double,
 //      was_price double,
 //      rating double,
+//      createdAt bigint,
+//      updatedAt bigint,
+//      version bigint,
 //      primary key (id)
 //      ) engine=innodb;
