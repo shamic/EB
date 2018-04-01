@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+// const qiniu = require('qiniu');
 
 // add url-route in /controllers:
 
@@ -37,10 +38,79 @@ function addControllers(router, dir) {
     });
 }
 
+function addUploadFile(router) {
+    //文件上传  
+    const multer = require('koa-multer');
+    //配置  
+    var storage = multer.diskStorage({
+        //文件保存路径  
+        destination: function (req, file, cb) {
+            if (file.originalname.match(/.txt/)) {
+                cb(null, './uploads/')
+            } else {
+                cb(null, './images/')
+            }
+        },
+        filename: function (req, file, cb) {
+            var fileFormat = (file.originalname).split(".");
+            cb(null, Date.now() + "." + fileFormat[fileFormat.length - 1]);
+        }
+    })
+    var upload = multer({ storage: storage });
+    //upload.single('file')这里面的file是上传空间的name<input type="file" name="file"/>    
+    router.post('/uploadFile', upload.single('file'), async (ctx, next) => {
+        // const filePath = __dirname + '/uploads/' + ctx.req.file.filename;
+        // // 上传到七牛
+        // const qiniu = await upToQiniu(filePath, ctx.req.file.filename.split('.').pop())
+        // // 上存到七牛之后 删除原来的缓存图片
+        // removeTemImage(imgPath)
+        ctx.response.body = {
+            code: 0,
+            msg: 'upload file success',
+            data: ctx.req.file.filename
+        };
+    })
+    console.log(`register URL mapping: POST /uploadFile`);
+}
+
+// 上传到七牛
+function upToQiniu(filePath, key) {
+    const accessKey = qiniuConfig.accessKey // 你的七牛的accessKey
+    const secretKey = qiniuConfig.secretKey // 你的七牛的secretKey
+    const mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
+
+    const options = {
+        scope: qiniuConfig.scope // 你的七牛存储对象
+    }
+    const putPolicy = new qiniu.rs.PutPolicy(options)
+    const uploadToken = putPolicy.uploadToken(mac)
+
+    const config = new qiniu.conf.Config()
+    // 空间对应的机房
+    config.zone = qiniu.zone.Zone_z2
+    const localFile = filePath
+    const formUploader = new qiniu.form_up.FormUploader(config)
+    const putExtra = new qiniu.form_up.PutExtra()
+    // 文件上传
+    return new Promise((resolved, reject) => {
+        formUploader.putFile(uploadToken, key, localFile, putExtra, function (respErr, respBody, respInfo) {
+            if (respErr) {
+                reject(respErr)
+            }
+            if (respInfo.statusCode == 200) {
+                resolved(respBody)
+            } else {
+                resolved(respBody)
+            }
+        })
+    })
+}
+
 module.exports = function (dir) {
     let
         controllers_dir = dir || 'controllers',
         router = require('koa-router')();
     addControllers(router, controllers_dir);
+    addUploadFile(router);
     return router.routes();
 };

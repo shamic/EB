@@ -23,6 +23,4 @@ module.exports = {
             throw new APIError('product:not_found', 'product not found by id.');
         }
     },
-
-    // 'POST /api/'
 };

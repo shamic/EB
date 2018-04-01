@@ -1,5 +1,7 @@
 /node_modules
 /logs
+/uploads
+/images
 coverage
 package-lock.json
 .DS_Store

@@ -21,6 +21,7 @@ app.use(async (ctx, next) => {
 // static file support:
 let staticFiles = require('./static-files');
 app.use(staticFiles('/static/', __dirname + '/static'));
+app.use(staticFiles('/images/', __dirname + '/images'));
 
 // parse request body:
 app.use(bodyParser());
