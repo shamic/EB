@@ -32,43 +32,43 @@ module.exports = {
     //     }
     // },
 
-    // 'POST /api/login': async (ctx, next) => {
-    //     var email = ctx.request.body.email;
-    //     var password = ctx.request.body.password;
-    //     const user = await User.findOne({
-    //         where: {
-    //             email
-    //         }
-    //     })
+    'POST /api/login': async (ctx, next) => {
+        var email = ctx.request.body.email;
+        var password = ctx.request.body.password;
+        const user = await User.findOne({
+            where: {
+                email
+            }
+        })
 
-    //     // 判断用户是否存在
-    //     if (user) {
-    //         // 判断前端传递的用户密码是否与数据库密码一致
-    //         if (bcrypt.compareSync(password, user.password)) {
-    //             // 用户token
-    //             const userToken = {
-    //                 name: user.email,
-    //                 id: user.id
-    //             }
-    //             const token = jwt.sign(userToken, secret.sign, { expiresIn: '1h' })  // 签发token
-    //             ctx.rest({
-    //                 data: { token: token }
-    //             });
-    //         } else {
-    //             ctx.rest({
-    //                 code: -102,
-    //                 msg: '用户名或密码错误',
-    //                 data: null
-    //             });
-    //         }
-    //     } else {
-    //         ctx.rest({
-    //             code: -101,
-    //             msg: '用户名不存在',
-    //             data: null
-    //         });
-    //     }
-    // },
+        // 判断用户是否存在
+        if (user) {
+            // 判断前端传递的用户密码是否与数据库密码一致
+            if (bcrypt.compareSync(password, user.password)) {
+                // 用户token
+                const userToken = {
+                    name: user.email,
+                    id: user.id
+                }
+                const token = jwt.sign(userToken, secret.sign, { expiresIn: '1h' })  // 签发token
+                ctx.rest({
+                    data: { token: token }
+                });
+            } else {
+                ctx.rest({
+                    code: -102,
+                    msg: '用户名或密码错误',
+                    data: null
+                });
+            }
+        } else {
+            ctx.rest({
+                code: -101,
+                msg: '用户不存在',
+                data: null
+            });
+        }
+    },
 
     'POST /api/createUser': async (ctx, next) => {
         var email = ctx.request.body.email;

@@ -6,6 +6,10 @@
 
 <script>
     $(function () {
+
+        var bean = JSON.parse(localStorage.getItem('bean'));
+        console.log(JSON.stringify(bean));
+        
         var vm = new Vue({
             el: '#product-list',
             data: {

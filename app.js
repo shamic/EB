@@ -23,7 +23,7 @@ app.use(async (ctx, next) => {
 });
 
 // jwt check token
-app.use(err());
+// app.use(err());
 
 // static file support:
 let staticFiles = require('./static-files');
@@ -34,7 +34,7 @@ app.use(staticFiles('/images/', __dirname + '/images'));
 app.use(bodyParser());
 
 // jwt dont check in login
-app.use(jwt({secret: secret.sign}).unless({path: [/^\/api\/login/, /^\/api\/createUser/]}))
+app.use(jwt({secret: secret.sign}).unless({path: [/^\//, /^\/api\/login/, /^\/api\/createUser/]}))
 
 // add nunjucks as view:
 app.use(templating('views', {

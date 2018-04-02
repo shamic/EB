@@ -66,8 +66,8 @@ module.exports = db.defineModel('books', {
 //      price double,
 //      was_price double,
 //      rating double,
-//      createdAt bigint,
-//      updatedAt bigint,
-//      version bigint,
+//      createdAt bigint not null,
+//      updatedAt bigint not null,
+//      version bigint not null,
 //      primary key (id)
 //      ) engine=innodb;
