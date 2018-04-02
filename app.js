@@ -10,6 +10,10 @@ const rest = require('./rest');
 
 const logger = require('./logger.js');
 
+const jwt = require('koa-jwt')
+const secret = require('./jwt/secret.json')
+const err = require('./jwt/error')
+
 const app = new Koa();
 
 // log request URL:
@@ -18,6 +22,9 @@ app.use(async (ctx, next) => {
     await next();
 });
 
+// jwt check token
+app.use(err());
+
 // static file support:
 let staticFiles = require('./static-files');
 app.use(staticFiles('/static/', __dirname + '/static'));
@@ -25,6 +32,9 @@ app.use(staticFiles('/images/', __dirname + '/images'));
 
 // parse request body:
 app.use(bodyParser());
+
+// jwt dont check in login
+app.use(jwt({secret: secret.sign}).unless({path: [/^\/api\/login/, /^\/api\/createUser/]}))
 
 // add nunjucks as view:
 app.use(templating('views', {

@@ -5,7 +5,9 @@ module.exports = db.defineModel('users', {
         type: db.STRING(100),
         unique: true
     },
-    passwd: db.STRING(100),
-    name: db.STRING(100),
-    gender: db.BOOLEAN
+    password: db.STRING(200),
+    name: {
+        type: db.STRING(100),
+        allowNull: true
+    }
 });
