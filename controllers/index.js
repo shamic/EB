@@ -4,7 +4,7 @@ module.exports = {
         ctx.render('login.html');
     },
     'GET /home': async (ctx, next) => {
-        ctx.render('index.html');
+        ctx.render('home.html');
     },
     'GET /addBook': async (ctx, next) => {
         ctx.render('addBook.html');

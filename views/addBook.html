@@ -1,15 +1,16 @@
-{% extends "base.html" %} {% block main %}
+{% extends "base2.html" %} {% block main %}
 
 <link rel="stylesheet" href="/static/css/fileinput.css">
 <script src="/static/js/fileinput.js"></script>
 <script src="/static/js/locales/zh.js"></script>
+<script src="/static/js/vue.min.js"></script>
 
 <script>
     $(function () {
 
         var bean = JSON.parse(localStorage.getItem('bean'));
         console.log(JSON.stringify(bean));
-        
+
         var vm = new Vue({
             el: '#product-list',
             data: {
@@ -21,28 +22,9 @@
             },
             methods: {
                 deleteProduct: function (id) {
-                    // var that = this;
-                    // // AJAX提交JSON:
-                    // $.ajax({
-                    //     type: 'delete',
-                    //     dataType: 'json',
-                    //     url: '/api/products/' + id
-                    // }).done(function (r) {
-                    //     console.log(r);
-                    //     var i;
-                    //     for (i = 0; i < that.products.length; i++) {
-                    //         if (that.products[i].id === r.id) {
-                    //             that.products.splice(i, 1);
-                    //             return;
-                    //         }
-                    //     }
-                    // }).fail(function (jqXHR, textStatus) {
-                    //     // Not 200:
-                    //     alert('Error: ' + jqXHR.status);
-                    // });
                 },
 
-                sendForm: function(postData) {
+                sendForm: function (postData) {
                     var that = this;
                     if (that.bookFile.length == 0 || that.bookImg.length == 0) {
                         return;
@@ -70,6 +52,7 @@
                             .val("")
                             .removeAttr("checked")
                             .removeAttr("selected");
+                        $('#txtFile').fileinput('reset');
                         $('#createBtn').disabled = false;
                     }).fail(function (jqXHR, textStatus) {
                         // Not 200:
@@ -114,9 +97,10 @@
             previewFileType: 'any',
             showPreview: false,
             language: 'zh',
-            browseLabel: 'Txt file',
+            browseLabel: '浏览...',
             uploadUrl: 'uploadFile',
-            browseClass: 'btn btn-default',
+            browseClass: 'btn btn-outline-secondary',
+            removeClass: 'btn btn-danger',
             allowedFileTypes: ['text'], // 限制文件类型为图片
             allowedFileExtensions: ['text'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
             maxFileCount: 1,  // 限制最多3张图片
@@ -126,7 +110,7 @@
             layoutTemplates: {
                 main1: '{preview}\n' +
                     '<div class="input-group {class}">\n' +
-                    '   <div class="input-group-btn">\n' +
+                    '   <div class="input-group-prepend">\n' +
                     '       {browse}\n' +
                     '       {remove}\n' +
                     '   </div>\n' +
@@ -136,6 +120,9 @@
                     '    <div class="file-caption-name">{caption}{size}</div>\n' +
                     '</div>'
             }
+        });
+        $('#txtFile').on('filecleared', function(event) {
+            $('#txtFile').fileinput('refresh', {caption: '添加图书txt文件'});
         });
         $('#txtFile').on('fileerror', function (event, data, msg) {
             console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
@@ -152,8 +139,9 @@
             showPreview: false,
             uploadUrl: 'uploadFile',
             language: 'zh',
-            browseLabel: 'Cover image',
-            browseClass: 'btn btn-default',
+            browseLabel: '浏览...',
+            browseClass: 'btn btn-outline-secondary',
+            removeClass: 'btn btn-danger',
             allowedFileTypes: ['image'], // 限制文件类型为图片
             allowedFileExtensions: ['image'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
             maxFileCount: 1,  // 限制最多3张图片
@@ -163,7 +151,7 @@
             layoutTemplates: {
                 main1: '{preview}\n' +
                     '<div class="input-group {class}">\n' +
-                    '   <div class="input-group-btn">\n' +
+                    '   <div class="input-group-prepend">\n' +
                     '       {browse}\n' +
                     '       {remove}\n' +
                     '   </div>\n' +
@@ -173,6 +161,9 @@
                     '    <div class="file-caption-name">{caption}{size}</div>\n' +
                     '</div>'
             }
+        });
+        $('#thumbnail').on('filecleared', function(event) {
+            $('#thumbnail').fileinput('refresh', {caption: '添加图书图片'});
         });
         $('#thumbnail').on('fileerror', function (event, data, msg) {
             console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
@@ -185,126 +176,145 @@
     });
 </script>
 
-<div class="container">
-    <div class="col">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <span class="glyphicon glyphicon-user"></span> Create New Book</h3>
-                </div>
-                <div class="panel-body">
-                    <form id="product-form">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Book name" value="" required>
-                            <p class="help-block">Book name</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Author</label>
-                            <input type="text" name="author" class="form-control" placeholder="Book author" value="" required>
-                            <p class="help-block">author</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="category">Book category</label>
-                            <select class="form-control" id="category">
-                                <option selected>Choose...</option>
-                                <option>科幻武侠</option>
-                                <option>历史小说</option>
-                                <option>经济管理</option>
-                                <option>人物传记</option>
-                                <option>青春言情</option>
-                            </select>
-                            <p class="help-block">category</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="thumbnail">Cover image</label>
-                            <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
-                            <p class="help-block">thumbnail</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="txtFile">Txt file</label>
-                            <input type="file" class="form-control-file" name="file" id="txtFile" accept=".txt">
-                            <p class="help-block">txt file</p>
-                        </div>
-                        <div class="form-group">
-                            <label>Introduction</label>
-                            <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3" required></textarea>
-                            <p class="help-block">introduction</p>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" id="createBtn" class="btn btn-primary">Create</button>
-                        </div>
-                    </form>
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">
+                            <span data-feather="home"></span>
+                            Books
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="file"></span>
+                            Create Book
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </div>
+        </nav>
 
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-th-list"></span> Books</h3>
-            </div>
-            <div class="panel-body">
-                <table id="product-list" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width:150px;border-bottom: 0;">Corer Image</th>
-                            <th style="border-bottom: 0;">Books</th>
-                            <th style="width:100px;border-bottom: 0;">Rating</th>
-                            <!-- <th style="width:50px"></th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="p in books">
-                            <td style="position: relative;">
-                                <img class="media-object" style="width:100px;padding: 10px 10px;position: absolute;top: 50%;transform: translateY(-50%);" v-bind:src="p.thumbnail_url">
-                            </td>
-                            <td>
-                                <h4 class="media-heading" v-text="p.name"></h4>
-                                <p>
-                                    <span v-text="p.author"></span>
-                                    <span>|</span>
-                                    <span v-text="p.category">
-                                </p>
-                                <p v-text="p.introduction" style="color:silver;"></p>
-                            </td>
-                            <td style="position: relative;">
-                                <p style="font-size:2em; color:red;height:auto;position: absolute;top: 50%;transform: translateY(-50%);">
-                                    <span v-text="p.rating"></span>
-                                    <span v-if="p.rating" style="font-size:14px;">分
-                                </p>
-                            </td>
-                            <td>
-                                <!-- <a target="_blank" v-bind:href="'http://search.jd.com/Search?enc=utf-8&keyword=' + encodeURIComponent(p.name)">Buy</a> -->
-                                <!-- <a target="_blank">Edit</a> -->
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Tips</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> -->
-                </div>
-                <div class="modal-body">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 
+            <div class="container">
+                <div class="col">
+                    <div class="col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h1 class="panel-title">
+                                    <span class="glyphicon glyphicon-user"></span> Create New Book</h1>
+                            </div>
+                            <div class="panel-body">
+                                <form id="product-form">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input type="text" name="name" class="form-control" placeholder="Book name" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Author</label>
+                                        <input type="text" name="author" class="form-control" placeholder="Book author" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="category">Book category</label>
+                                        <select class="form-control" id="category">
+                                            <option selected>Choose...</option>
+                                            <option>科幻武侠</option>
+                                            <option>历史小说</option>
+                                            <option>经济管理</option>
+                                            <option>人物传记</option>
+                                            <option>青春言情</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="thumbnail">Cover image</label>
+                                        <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="txtFile">Txt file</label>
+                                        <input type="file" class="form-control-file" name="file" id="txtFile" accept=".txt">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Introduction</label>
+                                        <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" id="createBtn" class="btn btn-primary">Create</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <!-- 
+                            <div class="col-md-8">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <span class="glyphicon glyphicon-th-list"></span> Books</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table id="product-list" class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:150px;border-bottom: 0;">Corer Image</th>
+                                                    <th style="border-bottom: 0;">Books</th>
+                                                    <th style="width:100px;border-bottom: 0;">Rating</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="p in books">
+                                                    <td style="position: relative;">
+                                                        <img class="media-object" style="width:100px;padding: 10px 10px;position: absolute;top: 50%;transform: translateY(-50%);" v-bind:src="p.thumbnail_url">
+                                                    </td>
+                                                    <td>
+                                                        <h4 class="media-heading" v-text="p.name"></h4>
+                                                        <p>
+                                                            <span v-text="p.author"></span>
+                                                            <span>|</span>
+                                                            <span v-text="p.category">
+                                                        </p>
+                                                        <p v-text="p.introduction" style="color:silver;"></p>
+                                                    </td>
+                                                    <td style="position: relative;">
+                                                        <p style="font-size:2em; color:red;height:auto;position: absolute;top: 50%;transform: translateY(-50%);">
+                                                            <span v-text="p.rating"></span>
+                                                            <span v-if="p.rating" style="font-size:14px;">分
+                                                        </p>
+                                                    </td>
+                                                    <td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>-->
+                <!-- Modal -->
+                <div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Tips</h5>
+                                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button> -->
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </main>
     </div>
 </div>
 {% endblock %}

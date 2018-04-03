@@ -10,7 +10,14 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.js"></script>
     <script src="/static/js/vue.min.js"></script>
-
+    <script>
+        $(function(){
+            const bean = localStorage.getItem('bean')
+            if (!bean || bean == 'null') {
+                window.location.href = '/';
+            }
+        })
+    </script>
 </head>
 
 <body>
