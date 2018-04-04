@@ -5,6 +5,7 @@ module.exports = db.defineModel('books', {
     author: db.STRING(20),
     category: db.STRING(10),
     introduction: db.STRING(200),
+    type: db.INTEGER,
 
     txt_url: {
         type: db.STRING(100),
@@ -55,6 +56,7 @@ module.exports = db.defineModel('books', {
 //      name varchar(100) not null,
 //      author varchar(20) not null,
 //      category varchar(10) not null,
+//      type integer not null comment '1: 小说, 2: 听书, 3:杂志 , 4:动漫 , 5:资讯',
 //      publisher varchar(100),
 //      publisher_date varchar(10),
 //      words_num bigint,

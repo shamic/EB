@@ -28,12 +28,14 @@
             contentType: 'application/json',
             url: '/api/books'
         }).done(function (res) {
-            res.data.map(element => {
-                if (element.thumbnail_url.indexOf('http') < 0) {
-                    element.thumbnail_url = '/images/' + element.thumbnail_url;
-                }
-            });
-            vm.books = res.data;            
+            if (res.code == 0) {
+                res.data.map(element => {
+                    if (element.thumbnail_url.indexOf('http') < 0) {
+                        element.thumbnail_url = '/images/' + element.thumbnail_url;
+                    }
+                });
+                vm.books = res.data;  
+            }   
         }).fail(function (jqXHR, textStatus) {
             alert('Error: ' + jqXHR.status);
         });

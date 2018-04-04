@@ -55,6 +55,9 @@
                             .removeAttr("selected");
                         $('#txtFile').fileinput('reset');
                         $('#createBtn').disabled = false;
+                        
+                        $('#myModel').modal('show');
+                        $('#myModel').find('.modal-body').text('创建成功！');
                     }).fail(function (jqXHR, textStatus) {
                         // Not 200:
                         $('#createBtn').disabled = false;
@@ -77,8 +80,13 @@
                     introduction: $('#introduction').val(),
                     category: $('#category').val()
                 };
-                $('#txtFile').fileinput('upload');
-                $('#thumbnail').fileinput('upload');
+                if ($('#txtFile').val()) {
+                    $('#txtFile').fileinput('upload');
+                } else if ($('#thumbnail').val()) {
+                    $('#thumbnail').fileinput('upload');
+                } else {
+                    vm.sendForm(vm.postData);
+                }
             }
         });
 
