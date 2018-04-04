@@ -23,7 +23,7 @@ app.use(async (ctx, next) => {
 });
 
 // jwt check token
-// app.use(err());
+app.use(err());
 
 // static file support:
 let staticFiles = require('./static-files');

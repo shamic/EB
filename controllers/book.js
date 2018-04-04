@@ -6,7 +6,15 @@ const APIError = require('../rest').APIError;
 
 module.exports = {
     'GET /api/books': async (ctx, next) => {
-        var books = await Books.findAll({limit: 10, order: 'createdAt asc'});
+        if (ctx.auth && ctx.auth.code != 0) {
+            ctx.rest({
+                code: ctx.auth.code,
+                msg: ctx.auth.message,
+                data: null
+            })
+            return
+        }
+        var books = await Books.findAll({limit: 1, order: 'createdAt asc'});
         books.map(element => {
             element.thumbnail_url = element.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
             element.rating = element.rating || "--";
@@ -25,6 +33,15 @@ module.exports = {
     },
 
     'POST /api/books': async (ctx, next) => {
+        if (ctx.auth && ctx.auth.code != 0) {
+            ctx.rest({
+                code: ctx.auth.code,
+                msg: ctx.auth.message,
+                data: null
+            })
+            return
+        }
+
         // TODO: param check
         var book = await Books.create({
             name: ctx.request.body.name, 

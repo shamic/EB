@@ -14,29 +14,46 @@ module.exports = function () {
         let payload
         try {
           payload = await jwt.verify(token.split(' ')[1], secret.sign)  // 解密payload，获取用户名和ID
+          ctx.auth = {
+            code: 0,
+            message: '认证成功'
+          }
           ctx.user = {
             name: payload.name,
             id: payload.id
           }
         } catch (err) {
+          ctx.auth = {
+            code: -101,
+            message: 'token verify fail'
+          }
           console.log('token verify fail: ', err)
+        }
+      } else {
+        ctx.auth = {
+          code: -102,
+          message: 'token is undefined'
         }
       }
 
-      console.log(`token: ${token}`)
+      // console.log(`token: ${token}`)
 
       await next()
     } catch (err) {
       if (err.status === 401) {
-        ctx.body = {
+        ctx.auth = {
           code: -1,
           message: '认证失败'
         }
       } else {
-        err.status = 404
-        ctx.body = '404'
+        ctx.auth = {
+          code: 404,
+          message: '404'
+        }
         console.log('err：', err)
       }
+
+      await next()
     }
   }
 }

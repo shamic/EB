@@ -73,7 +73,7 @@
               alert('Error: ' + r.msg);
             } else {
               localStorage.setItem('bean', JSON.stringify(r.data));
-              window.location.href = '/addBook';
+              window.location.href = '/home';
             }
         }).fail(function (jqXHR, textStatus) {
             // Not 200:

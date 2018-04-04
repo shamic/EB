@@ -14,8 +14,6 @@
         var vm = new Vue({
             el: '#product-list',
             data: {
-                products: [],
-                books: [],
                 postData: null,
                 bookFile: '',
                 bookImg: ''
@@ -34,16 +32,19 @@
                     vm.postData.txt_url = vm.bookFile;
                     $.ajax({
                         type: 'post',
+                        headers: {
+                            'Authorization': 'Bearer ' + bean.token
+                        },
                         dataType: 'json',
                         contentType: 'application/json',
                         url: '/api/books',
                         data: JSON.stringify(vm.postData)
                     }).done(function (r) {
-                        r.data.thumbnail_url = r.data.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
-                        if (r.data.thumbnail_url.indexOf('http') < 0) {
-                            r.data.thumbnail_url = '/images/' + r.data.thumbnail_url;
-                        }
-                        that.books.unshift(r.data);
+                        // r.data.thumbnail_url = r.data.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
+                        // if (r.data.thumbnail_url.indexOf('http') < 0) {
+                        //     r.data.thumbnail_url = '/images/' + r.data.thumbnail_url;
+                        // }
+                        // that.books.unshift(r.data);
                         vm.postData = null;
                         vm.bookFile = '';
                         vm.bookImg = '';
@@ -61,17 +62,6 @@
                     });
                 }
             }
-        });
-
-        $.getJSON('/api/books').done(function (res) {
-            res.data.map(element => {
-                if (element.thumbnail_url.indexOf('http') < 0) {
-                    element.thumbnail_url = '/images/' + element.thumbnail_url;
-                }
-            });
-            vm.books = res.data;
-        }).fail(function (jqXHR, textStatus) {
-            alert('Error: ' + jqXHR.status);
         });
 
         $('#product-form').submit(function (e) {
@@ -249,49 +239,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- 
-                            <div class="col-md-8">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            <span class="glyphicon glyphicon-th-list"></span> Books</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <table id="product-list" class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width:150px;border-bottom: 0;">Corer Image</th>
-                                                    <th style="border-bottom: 0;">Books</th>
-                                                    <th style="width:100px;border-bottom: 0;">Rating</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="p in books">
-                                                    <td style="position: relative;">
-                                                        <img class="media-object" style="width:100px;padding: 10px 10px;position: absolute;top: 50%;transform: translateY(-50%);" v-bind:src="p.thumbnail_url">
-                                                    </td>
-                                                    <td>
-                                                        <h4 class="media-heading" v-text="p.name"></h4>
-                                                        <p>
-                                                            <span v-text="p.author"></span>
-                                                            <span>|</span>
-                                                            <span v-text="p.category">
-                                                        </p>
-                                                        <p v-text="p.introduction" style="color:silver;"></p>
-                                                    </td>
-                                                    <td style="position: relative;">
-                                                        <p style="font-size:2em; color:red;height:auto;position: absolute;top: 50%;transform: translateY(-50%);">
-                                                            <span v-text="p.rating"></span>
-                                                            <span v-if="p.rating" style="font-size:14px;">分
-                                                        </p>
-                                                    </td>
-                                                    <td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>-->
+                
                 <!-- Modal -->
                 <div class="modal fade" id="myModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
