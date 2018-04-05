@@ -46,18 +46,30 @@ module.exports = {
             return
         }
 
-        // TODO: param check
+        var typeDesc = ctx.request.body.type;
+        var type = 1;
+        if (typeDesc == '小说') {
+            type = 1;
+        } else if (typeDesc == '听书') {
+            type = 2;
+        } else if (typeDesc == '杂志') {
+            type = 3;
+        } else if (typeDesc == '漫画') {
+            type = 4;
+        } else if (typeDesc == '资讯') {
+            type = 5;
+        }
         var book = await Books.create({
             name: ctx.request.body.name, 
             author: ctx.request.body.author, 
             category: ctx.request.body.category, 
-            type: 1, 
+            type: type, 
             publisher: ctx.request.body.publisher || null, 
             publisher_date: ctx.request.body.publisher_date || null, 
             words_num: parseInt(ctx.request.body.words_num) || null, 
             introduction: ctx.request.body.introduction,
             thumbnail_url:  ctx.request.body.thumbnail_url || null,
-            //audio_url:  ctx.request.body.audio_url,
+            audio_url:  ctx.request.body.audio_url || null,
             txt_url:  ctx.request.body.txt_url || null,
             visits: parseInt(ctx.request.body.visits) || null, 
             price: parseFloat(ctx.request.body.price) || null,

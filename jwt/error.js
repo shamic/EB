@@ -24,8 +24,8 @@ module.exports = function () {
           }
         } catch (err) {
           ctx.auth = {
-            code: -101,
-            message: 'token verify fail'
+            code: -1,
+            message: '认证失败'
           }
           console.log('token verify fail: ', err)
         }
@@ -48,7 +48,7 @@ module.exports = function () {
       } else {
         ctx.auth = {
           code: 404,
-          message: '404'
+          message: '认证失败'
         }
         console.log('err：', err)
       }

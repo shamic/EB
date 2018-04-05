@@ -47,13 +47,15 @@ function addUploadFile(router) {
         destination: function (req, file, cb) {
             if (file.originalname.match(/.txt/)) {
                 cb(null, './uploads/')
+            } else if (file.originalname.match(/.mp3/) || file.originalname.match(/.mp4/)) {
+                cb(null, './audios/');
             } else {
                 cb(null, './images/')
             }
         },
         filename: function (req, file, cb) {
             var fileFormat = (file.originalname).split(".");
-            cb(null, Date.now() + "." + fileFormat[fileFormat.length - 1]);
+            cb(null, fileFormat[0] + '_' +Date.now() + "." + fileFormat[fileFormat.length - 1]);
         }
     })
     var upload = multer({ storage: storage });

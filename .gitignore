@@ -2,6 +2,7 @@
 /logs
 /uploads
 /images
+/audios
 coverage
 package-lock.json
 .DS_Store
