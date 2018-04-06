@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+const send = require('koa-send');
 // const qiniu = require('qiniu');
 
 // add url-route in /controllers:
@@ -55,7 +56,7 @@ function addUploadFile(router) {
         },
         filename: function (req, file, cb) {
             var fileFormat = (file.originalname).split(".");
-            cb(null, fileFormat[0] + '_' +Date.now() + "." + fileFormat[fileFormat.length - 1]);
+            cb(null, fileFormat[0] + '_' + Date.now() + "." + fileFormat[fileFormat.length - 1]);
         }
     })
     var upload = multer({ storage: storage });
@@ -73,6 +74,32 @@ function addUploadFile(router) {
         };
     })
     console.log(`register URL mapping: POST /uploadFile`);
+}
+
+function addDownloadFile(router) {
+    // download txt/audio
+    router.get('/download', async (ctx, next) => {
+        var fileType = ctx.request.query.fileType || 1; // 1: txt 2: audio
+        var fileName = ctx.request.query.fileName || '';
+        var path = '/uploads';
+        if (fileType == 2) {
+            path = '/audios';
+        }
+        // Set Content-Disposition to "attachment" to signal the client to prompt for download.
+        // Optionally specify the filename of the download.
+        // 设置实体头（表示消息体的附加信息的头字段）,提示浏览器以文件下载的方式打开
+        // 也可以直接设置 ctx.set("Content-disposition", "attachment; filename=" + fileName);
+        try {
+            ctx.attachment(fileName);
+            await send(ctx, fileName, { root: __dirname + path });
+        } catch (error) {
+            ctx.response.body = {
+                code: -1,
+                msg: 'download file fail'
+            };
+        }
+    });
+    console.log(`register URL mapping: GET /download`);
 }
 
 // 上传到七牛
@@ -114,5 +141,6 @@ module.exports = function (dir) {
         router = require('koa-router')();
     addControllers(router, controllers_dir);
     addUploadFile(router);
+    addDownloadFile(router);
     return router.routes();
 };

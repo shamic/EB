@@ -328,4 +328,5 @@ response:
 {"code":0,"msg":"success","data":{"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}}
 
 
-
+GET
+url: baseUrl/download?fileType=1&fileName=鹿鼎记_1522936478840.txt  // 1: txt 2: audio

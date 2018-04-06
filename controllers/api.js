@@ -50,7 +50,7 @@ module.exports = {
                     name: user.email,
                     id: user.id
                 }
-                const token = jwt.sign(userToken, secret.sign, { expiresIn: '1h' })  // 签发token
+                const token = jwt.sign(userToken, secret.sign, { expiresIn: '4h' })  // 签发token
                 ctx.rest({
                     data: { token: token }
                 });
@@ -107,7 +107,7 @@ module.exports = {
                     name: newUser.email,
                     id: newUser.id
                 }
-                const token = jwt.sign(userToken, secret.sign, { expiresIn: '1h' })
+                const token = jwt.sign(userToken, secret.sign, { expiresIn: '4h' })
 
                 ctx.rest({
                     msg: '创建成功',

@@ -54,7 +54,7 @@ module.exports = db.defineModel('books', {
 // create table books (
 //      id varchar(50) not null,
 //      name varchar(100) not null,
-//      author varchar(20) not null,
+//      author varchar(100) not null,
 //      category varchar(10) not null,
 //      type integer not null comment '1: 小说, 2: 听书, 3:杂志 , 4:动漫 , 5:资讯',
 //      publisher varchar(100),
