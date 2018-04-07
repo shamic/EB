@@ -7,6 +7,7 @@ const secret = require('../jwt/secret.json')
 const bcrypt = require('bcryptjs')
 
 let User = model.User;
+let Books = model.Books;
 
 const APIError = require('../rest').APIError;
 
@@ -124,69 +125,89 @@ module.exports = {
     },
 
     'POST /api/home': async (ctx, next) => {
-        ctx.rest({
-            data: {
-                banner: [
-                    {img: '123456643.jpg', desc: '', type: 'banner', categoryId: '', items:[]}, 
-                    {img: '123456643.jpg', desc: '', type: 'banner', categoryId: '', items:[]}
-                ],
-                category: [
-                    {img: '123456643.jpg', desc: '小说', type: 'category', categoryId: '1', items:[]}, 
-                    {img: '123456643.jpg', desc: '听书', type: 'category', categoryId: '2', items:[]},
-                    {img: '123456643.jpg', desc: '杂志', type: 'category', categoryId: '3', items:[]}, 
-                    {img: '123456643.jpg', desc: '动漫', type: 'category', categoryId: '4', items:[]}
-                ],
-                itemList: [
-                    {img: '123456643.jpg', desc: '小说', type: 'itemList', categoryId: '', items:[
-                        {"name":"琅琊榜","author":"海宴","tpye":1,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":1,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":1,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
-                    ]}, 
-                    {img: '123456643.jpg', desc: '听书', type: 'itemList', categoryId: '', items:[
-                        {"name":"琅琊榜","author":"海宴","tpye":2,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":2,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":2,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
-                    ]},
-                    {img: '123456643.jpg', desc: '杂志', type: 'itemList', categoryId: '', items:[
-                        {"name":"琅琊榜","author":"海宴","tpye":3,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":3,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":3,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
-                    ]}, 
-                    {img: '123456643.jpg', desc: '动漫', type: 'itemList', categoryId: '', items:[
-                        {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                        {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
-                    ]}
-                ]
+        var data = {
+            banner: [
+                {img: 'banner1.jpg', desc: '', type: 'banner', categoryId: '1', items:[]}, 
+                {img: 'banner2.jpg', desc: '', type: 'banner', categoryId: '2', items:[]}
+            ],
+            category: [
+                {img: '', desc: '小说', type: 'category', categoryId: '1', items:[]}, 
+                {img: '', desc: '听书', type: 'category', categoryId: '2', items:[]},
+                {img: '', desc: '杂志', type: 'category', categoryId: '3', items:[]}, 
+                {img: '', desc: '动漫', type: 'category', categoryId: '4', items:[]}
+            ]
+        }
+        var itemList = []
+        for (var i = 1; i < 5; i++) {
+            var resutl = await Books.findAll({limit: 3, order: 'createdAt asc', where: {type: i}});
+            if (resutl && resutl.length > 0) {
+                var des = '';
+                switch(i) {
+                case 1:
+                    des = '小说';
+                    break;
+                case 2:
+                    des = '听书';
+                    break;
+                case 2:
+                    des = '杂志';
+                    break;
+                case 2:
+                    des = '动漫';
+                    break;
+                default:
+                    des = '小说';
+                }
+                var item = {img: '', desc: des, type: 'itemList', categoryId: '', items: resutl};
+                itemList.push(item);
             }
+        }
+        data.itemList = itemList;
+
+        ctx.rest({
+            data: data
         });
     },
 
     'POST /api/category': async (ctx, next) => {
-        var categoryId = ctx.request.body.categoryId;
-        ctx.rest({
-            data: [
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1},
-                {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
-            ]
-        });
+        var categoryId = parseInt(ctx.request.body.categoryId) || 0;
+        var pageSize = parseInt(ctx.request.body.pageSize) || 20;
+        var start = parseInt(ctx.request.body.start) || 0;
+
+        var resutl = await Books.findAll({
+                offset: start, 
+                limit: pageSize, 
+                order: 'createdAt asc', 
+                where: {type: categoryId}
+            });
+
+        if (resutl) {
+            ctx.rest({
+                data: resutl
+            })
+        } else {
+            ctx.rest({
+                code: -1,
+                msg: '无该分类'
+            });
+        }
     },
 
     'POST /api/book': async (ctx, next) => {
-        var email = ctx.request.body.bookId;
-        ctx.rest({
-            data: {"name":"琅琊榜","author":"海宴","tpye":4,"category":"青春言情","introduction":"一卷风云琅琊榜，囊尽天下奇英才。讲述了“麒麟才子”梅长苏才冠绝伦，以病弱之躯拨开重重迷雾、智博奸佞，为昭雪多年冤案、扶持新君所进行的复仇故事。","txt_url":null,"words_num":736000,"publisher":null,"publisher_date":null,"thumbnail_url":"123456643.jpg","audio_url":null,"visits":1023200,"price":0,"was_price":0,"rating":9.7,"id":"kjdkjf123djjk","createdAt":15523000404,"updatedAt":15523000404,"version":1}
+        var bookId = ctx.request.body.bookId || '';
+        var resutl = await Books.findOne({
+            where: {id: bookId}
         });
+
+        if (resutl) {
+            ctx.rest({
+                data: resutl
+            })
+        } else {
+            ctx.rest({
+                code: -1,
+                msg: '未查找到'
+            });
+        }
     }
 };

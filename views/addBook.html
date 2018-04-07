@@ -9,7 +9,7 @@
     $(function () {
 
         var bean = JSON.parse(localStorage.getItem('bean'));
-        console.log(JSON.stringify(bean));
+        // console.log(JSON.stringify(bean));
 
         var vm = new Vue({
             el: '#product-list',
@@ -78,10 +78,12 @@
                             $('#myModel').modal('show');
                             $('#myModel').find('.modal-body').text(res.msg);
                         }
-                        $('#createBtn').disabled = false;
+                        $('#myLoading').hide();
+                        $('#createBtn').attr('disabled', false);
                     }).fail(function (jqXHR, textStatus) {
                         // Not 200:
-                        $('#createBtn').disabled = false;
+                        $('#myLoading').hide();
+                        $('#createBtn').attr('disabled', false);
                         alert('Error: ' + jqXHR.status);
                     });
                 }
@@ -97,7 +99,7 @@
 
             }
         })
-        $('#audio_group').hide();
+
         $("#category").change(function () {
             $('#category').css("border-color", "");
         });
@@ -117,7 +119,8 @@
         });
 
         $('#product-form').submit(function (e) {
-            $('#createBtn').disabled = true;
+            $('#myLoading').show();
+            $('#createBtn').attr('disabled', true);
             e.preventDefault();
             if ($('#category').val() == '请选择...') {
                 // $('#myModel').modal('show');
@@ -373,7 +376,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="audio_group">
+                                    <div class="form-group" id="audio_group" style="display: none;">
                                         <label for="audioFile">音频文件</label>
                                         <input type="file" class="form-control-file" name="file" id="audioFile" accept="audio/*">
                                     </div>
@@ -390,7 +393,8 @@
                                         <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3" required></textarea>
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" id="createBtn" class="btn btn-primary">Create</button>
+                                        <button type="submit" id="createBtn" class="btn btn-primary" data-loading-text="提交中...">创建</button>
+                                        <img id="myLoading" src="../static/images/loading.gif" style="display: none;height: 30px;width: 30px;margin-left: 10px;">
                                     </div>
                                 </form>
                             </div>

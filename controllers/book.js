@@ -15,8 +15,8 @@ module.exports = {
             })
             return
         }
-        var pageSize = ctx.request.body.pageSize || 20;
-        var start = ctx.request.body.pageSize || 0;
+        var pageSize = parseInt(ctx.request.body.pageSize) || 20;
+        var start = parseInt(ctx.request.body.start) || 0;
 
         var resutl = await Books.findAndCountAll({offset: start, limit: pageSize}); //order: 'createdAt asc'
         var books = resutl.rows
