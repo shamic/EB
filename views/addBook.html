@@ -20,8 +20,18 @@
                 bookAudio: ''
             },
             methods: {
-                deleteProduct: function (id) {
-                },
+                isDate: function (str){
+                    var reg=/^(\d{4})-(\d{2})-(\d{2})$/;
+                    if (str=='') {
+                        return false;
+                    }
+                    var arr=reg.exec(str);
+
+                    if(!reg.test(str) || parseInt(RegExp.$2)>=12 || parseInt(RegExp.$3)>=31){
+                        return false;
+                    }
+                    return true;
+                },          
 
                 sendForm: function (postData) {
                     var that = this;
@@ -119,17 +129,14 @@
         });
 
         $('#product-form').submit(function (e) {
-            $('#myLoading').show();
-            $('#createBtn').attr('disabled', true);
             e.preventDefault();
             if ($('#category').val() == '请选择...') {
-                // $('#myModel').modal('show');
-                // $('#myModel').find('.modal-body').text('请选择分类');
                 $('#category').css("border-color", "red");
             } else if ($('#book_type').val() == '请选择...') {
-                // $('#myModel').modal('show');
-                // $('#myModel').find('.modal-body').text('请添加图书类型');
                 $('#book_type').css("border-color", "red");
+            } else if ($('#publisher_date').val().length > 0 && !vm.isDate($('#publisher_date').val())) {
+                $('#myModel').modal('show');
+                $('#myModel').find('.modal-body').text('时间格式不正确，格式如：2018-02-26');
             } else if ($('#thumbnail').val() == '') {
                 $('#myModel').modal('show');
                 $('#myModel').find('.modal-body').text('请添加图书封面图');
@@ -140,6 +147,8 @@
                 $('#myModel').modal('show');
                 $('#myModel').find('.modal-body').text('请添加图书音频文件');
             } else {
+                $('#myLoading').show();
+                $('#createBtn').attr('disabled', true);
                 vm.postData = {
                     name: $(this).find('input[name=name]').val(),
                     author: $(this).find('input[name=author]').val(),
@@ -331,25 +340,25 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>书名</label>
-                                            <input type="text" name="name" class="form-control" placeholder="书名" value="" required>
+                                            <input type="text" maxlength="100" name="name" class="form-control" placeholder="书名" value="" required>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>作者</label>
-                                            <input type="text" name="author" class="form-control" placeholder="作者" value="" required>
+                                            <input type="text" maxlength="100" name="author" class="form-control" placeholder="作者" value="" required>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label>出版社(可选)</label>
-                                            <input type="text" name="publisher" class="form-control" placeholder="出版社" value="">
+                                            <input type="text" maxlength="100" name="publisher" class="form-control" placeholder="出版社" value="">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>出版时间(可选)</label>
-                                            <input type="text" name="publisher_date" class="form-control" placeholder="出版时间" value="">
+                                            <input type="text" maxlength="10" id='publisher_date' name="publisher_date" class="form-control" placeholder="例：2018-02-26" value="">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>字数(可选)</label>
-                                            <input type="text" name="words_num" class="form-control" placeholder="字数" value="">
+                                            <input type="text" maxlength="11" name="words_num" class="form-control" placeholder="字数" value="" onkeyup="value=value.replace(/[^\d]/g,'')">
                                         </div>
                                     </div>
                                     <div class="form-row">
@@ -390,7 +399,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>简介</label>
-                                        <textarea class="form-control" style="resize: vertical;" id="introduction" rows="3" required></textarea>
+                                        <textarea class="form-control" maxlength="500" placeholder="字数最多500" style="resize: vertical;" id="introduction" rows="3" required></textarea>
                                     </div>
                                     <div class="form-group">
                                         <button type="submit" id="createBtn" class="btn btn-primary" data-loading-text="提交中...">创建</button>

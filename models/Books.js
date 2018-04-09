@@ -60,7 +60,7 @@ module.exports = db.defineModel('books', {
 //      publisher varchar(100),
 //      publisher_date varchar(10),
 //      words_num bigint,
-//      introduction varchar(200) not null,
+//      introduction varchar(500) not null,
 //      thumbnail_url varchar(200),
 //      txt_url varchar(200),
 //      audio_url varchar(200),
