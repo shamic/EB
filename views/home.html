@@ -6,55 +6,145 @@
     $(function () {
 
         var bean = JSON.parse(localStorage.getItem('bean'));
+        var _pageSize = 20;
         // console.log(JSON.stringify(bean));
 
         var vm = new Vue({
             el: '#product-list',
             data: {
-                books: []
+                books: [],
+                pageItems: [],
+                currentPage: 1
             },
             methods: {
-                deleteProduct: function (id) {
+                deleteBook: function (id) {
+                    var that = this;
+                    if (!id) {
+                        return;
+                    }
+                    var params = { bookId: id };
+                    $.ajax({
+                        type: 'post',
+                        headers: {
+                            'Authorization': 'Bearer ' + bean.token
+                        },
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        url: '/api/deleteBook',
+                        data: JSON.stringify(params)
+                    }).done(function (res) {
+                        if (res.code == 0) {
+                            $('#myModel').modal('show');
+                            $('#myModel').find('.modal-body').text('删除成功！');
+                            var deleteBookId = res.data;
+                            var i;
+                            for (i = 0; i < that.books.length; i++) {
+                                if (that.books[i].id === deleteBookId) {
+                                    that.books.splice(i, 1);
+                                    return;
+                                }
+                            }
+                        } else {
+                            $('#myModel').modal('show');
+                            $('#myModel').find('.modal-body').text(res.msg);
+                        }
+                    }).fail(function (jqXHR, textStatus) {
+                        // Not 200:
+                        alert('Error: ' + jqXHR.status);
+                    });
+                },
+
+                changePage: function (pageItem) {
+                    if (pageItem.class == 'page-item disabled') {
+                        return;
+                    }
+                    if (pageItem.desc == '上一页') {
+                        this.currentPage--;
+                    } else if (pageItem.desc == '下一页') {
+                        this.currentPage++;
+                    } else if (pageItem.desc == '...') {
+                        this.currentPage = 10;
+                    } else {
+                        this.currentPage = parseInt(pageItem.desc);
+                    }
+                    console.log('🌹🌹CurrentPage is ' + this.currentPage);
+                    this.getBooks(this.currentPage - 1);
+                },
+
+                getBooks: function (page) {
+                    $.ajax({
+                        type: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + bean.token
+                        },
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        url: '/api/books',
+                        data: JSON.stringify({
+                            start: page * _pageSize,
+                            pageSize: _pageSize
+                        })
+                    }).done(function (res) {
+                        if (res.code == 0) {
+                            res.data.rows.map(element => {
+                                if (element.thumbnail_url.indexOf('http') < 0) {
+                                    element.thumbnail_url = '/images/' + element.thumbnail_url;
+                                }
+                            });
+                            vm.books = [];
+                            vm.books = res.data.rows;
+                            vm.pageItems = [];
+                            var pages = Math.ceil(res.data.count / _pageSize);
+                            if (pages > 1) {
+                                for (var i = 0; i < pages + 2; i++) {
+                                    var item = { class: 'page-item', desc: i.toString() };
+                                    if (i == 0) {
+                                        item.class = 'page-item';
+                                        item.desc = '上一页';
+                                    }
+                                    if (i == pages + 1) {
+                                        item.class = 'page-item';
+                                        item.desc = '下一页';
+                                    }
+                                    if (i == page + 1) { // 当前页
+                                        item.class = 'page-item disabled';
+                                    }
+                                    vm.pageItems.push(item);
+                                }
+                                if (1 == page + 1) { // 当前页是第一页
+                                    vm.pageItems[0].class = 'page-item disabled';
+                                }
+                                if (pages == page + 1) { // 当前页是最后一页
+                                    vm.pageItems[vm.pageItems.length-1].class = 'page-item disabled';
+                                }
+                                if (pages > 15) {
+                                    vm.pageItems[11].desc = '...';
+                                    vm.pageItems.splice(12, pages + 2 - 12 - 3);
+                                }
+                            }
+                        } else {
+                            $('#myModel').modal('show');
+                            $('#myModel').find('.modal-body').text(res.msg);
+                        }
+                    }).fail(function (jqXHR, textStatus) {
+                        alert('Error: ' + jqXHR.status);
+                    });
                 }
             }
         });
 
-        $.ajax({
-            type: 'get',
-            headers: {
-                'Authorization': 'Bearer ' + bean.token
-            },
-            dataType: 'json',
-            contentType: 'application/json',
-            url: '/api/books'
-        }).done(function (res) {
-            if (res.code == 0) {
-                res.data.map(element => {
-                    if (element.thumbnail_url.indexOf('http') < 0) {
-                        element.thumbnail_url = '/images/' + element.thumbnail_url;
-                    }
-                });
-                vm.books = res.data;  
-            } else {
-                $('#myModel').modal('show');
-                $('#myModel').find('.modal-body').text(res.msg);
-            }
-        }).fail(function (jqXHR, textStatus) {
-            alert('Error: ' + jqXHR.status);
-        });
+        vm.getBooks(0);
+
         $('#myModel').on('hidden.bs.modal', function (e) {
-            window.location.href = '/';
+            var modal_body_text = $('#myModel').find('.modal-body')[0].innerText;
+            if (modal_body_text == '删除成功！') {
+
+            } else if (modal_body_text == '认证失败' || modal_body_text == 'token is undefined') {
+                window.location.href = '/';
+            } else {
+
+            }
         })
-        // $.getJSON('/api/books').done(function (res) {
-        //     res.data.map(element => {
-        //         if (element.thumbnail_url.indexOf('http') < 0) {
-        //             element.thumbnail_url = '/images/' + element.thumbnail_url;
-        //         }
-        //     });
-        //     vm.books = res.data;
-        // }).fail(function (jqXHR, textStatus) {
-        //     alert('Error: ' + jqXHR.status);
-        // });
     });
 </script>
 
@@ -80,29 +170,7 @@
             </div>
         </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-                <!-- <button onclick="handleClick()">立即下载</button>
-                <iframe name="myIframe" style="display:none"></iframe>
-                <script>
-                 const handleClick = () => {
-                    window.open('/download?fileType=1&fileName=1522936478840.txt', 'myIframe');
-                    // var data = {
-                    //     fileType: 1,
-                    //     fileName: '1522936478840.txt'
-                    // }
-                    // $.ajax({
-                    //     type: 'post',
-                    //     dataType: 'json',
-                    //     contentType: 'application/json',
-                    //     url: '/download',
-                    //     data: JSON.stringify(data)
-                    // }).done(function (res) {
-                    //     console.log(JSON.stringify(res));
-                    // }).fail(function (jqXHR, textStatus) {
-                    //     alert('Error: ' + jqXHR.status);
-                    // });
-                 }
-                </script> -->
+        <main id="product-list" role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <h1 style="margin-bottom: 20px;">书库</h1>
             <!-- <nav class="navbar navbar-light justify-content-between" style="background-color: #e3f2fd;">
                 <a class="navbar-brand">Navbar</a>
@@ -112,7 +180,7 @@
                 </form>
             </nav> -->
             <div class="table-responsive" style="border-bottom: 1px solid #dee2e6;margin-bottom: 30px;">
-                <table id="product-list" class="table table-hover">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th style="width:150px;border-bottom: 0;border-top: 0;">图书封面</th>
@@ -142,7 +210,7 @@
                                 </p> -->
                                 <p class="btn-group" role="group" aria-label="operate" style="position: absolute;top: 50%;transform: translateY(-50%);">
                                     <button type="button" class="btn btn-link btn-sm">编辑</button>
-                                    <button type="button" class="btn btn-link btn-sm">删除</button>
+                                    <button type="button" class="btn btn-link btn-sm" v-on:click="deleteBook(p.id)">删除</button>
                                 </p>
                             </td>
                             <td>
@@ -150,16 +218,10 @@
                     </tbody>
                 </table>
             </div>
-            <nav aria-label="Page navigation example">
+            <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
+                    <li v-for="item in pageItems" v-bind:class="item.class" v-on:click="changePage(item)">
+                        <a class="page-link" v-text="item.desc"></a>
                     </li>
                 </ul>
             </nav>

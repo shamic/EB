@@ -330,3 +330,10 @@ response:
 
 GET
 url: baseUrl/download?fileType=1&fileName=鹿鼎记_1522936478840.txt  // 1: txt 2: audio
+
+// 删除
+POST 
+url: baseUrl/api/deleteBook
+param: {bookId: "kjdkjf123djjk"}
+response:
+{"code":0,"msg":"success","data":"122319c6-d417-4a8a-a366-6fdf0f980cc9"} // data: delete bookId
