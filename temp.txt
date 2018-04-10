@@ -337,3 +337,7 @@ url: baseUrl/api/deleteBook
 param: {bookId: "kjdkjf123djjk"}
 response:
 {"code":0,"msg":"success","data":"122319c6-d417-4a8a-a366-6fdf0f980cc9"} // data: delete bookId
+
+图片地址：
+http://193.112.90.119:8080/images/ + imgName(eg. 'banner1.jpg')
+
