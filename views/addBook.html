@@ -339,31 +339,31 @@
                                 <form id="product-form">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label>书名</label>
+                                            <label class="col-form-label">书名</label>
                                             <input type="text" maxlength="100" name="name" class="form-control" placeholder="书名" value="" required>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label>作者</label>
+                                            <label class="col-form-label">作者</label>
                                             <input type="text" maxlength="100" name="author" class="form-control" placeholder="作者" value="" required>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <label>出版社(可选)</label>
+                                            <label class="col-form-label">出版社(可选)</label>
                                             <input type="text" maxlength="100" name="publisher" class="form-control" placeholder="出版社" value="">
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>出版时间(可选)</label>
+                                            <label class="col-form-label">出版时间(可选)</label>
                                             <input type="text" maxlength="10" id='publisher_date' name="publisher_date" class="form-control" placeholder="例：2018-02-26" value="">
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>字数(可选)</label>
+                                            <label class="col-form-label">字数(可选)</label>
                                             <input type="text" maxlength="11" name="words_num" class="form-control" placeholder="字数" value="" onkeyup="value=value.replace(/[^\d]/g,'')">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label for="category">分类</label>
+                                            <label for="category" class="col-form-label">分类</label>
                                             <select class="form-control" id="category">
                                                 <option selected>请选择...</option>
                                                 <option>科幻武侠</option>
@@ -374,7 +374,7 @@
                                             </select>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label for="book_type">类型</label>
+                                            <label for="book_type" class="col-form-label">类型</label>
                                             <select class="form-control" id="book_type">
                                                 <option selected>请选择...</option>
                                                 <option>小说</option>
@@ -386,19 +386,19 @@
                                         </div>
                                     </div>
                                     <div class="form-group" id="audio_group" style="display: none;">
-                                        <label for="audioFile">音频文件</label>
+                                        <label for="audioFile" class="col-form-label">音频文件</label>
                                         <input type="file" class="form-control-file" name="file" id="audioFile" accept="audio/*">
                                     </div>
                                     <div class="form-group">
-                                        <label for="thumbnail">封面图片</label>
+                                        <label for="thumbnail" class="col-form-label">封面图片</label>
                                         <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
                                     </div>
                                     <div class="form-group">
-                                        <label for="txtFile">图书txt文件</label>
+                                        <label for="txtFile" class="col-form-label">图书txt文件</label>
                                         <input type="file" class="form-control-file" name="file" id="txtFile" accept=".txt">
                                     </div>
                                     <div class="form-group">
-                                        <label>简介</label>
+                                        <label class="col-form-label">简介</label>
                                         <textarea class="form-control" maxlength="500" placeholder="字数最多500" style="resize: vertical;" id="introduction" rows="3" required></textarea>
                                     </div>
                                     <div class="form-group">
