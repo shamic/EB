@@ -35,25 +35,25 @@
 
                 sendForm: function (postData) {
                     var that = this;
-                    if ($('#book_type').val() == '听书') {
-                        if (that.bookAudio.length == 0 || that.bookFile.length == 0 || that.bookImg.length == 0) {
-                            return;
-                        }
-                    } else {
-                        if (that.bookFile.length == 0 || that.bookImg.length == 0) {
-                            return;
-                        }
+                    // if ($('#book_type').val() == '听书') {
+                    //     if (that.bookAudio.length == 0 || that.bookFile.length == 0 || that.bookImg.length == 0) {
+                    //         return;
+                    //     }
+                    // } else {
+                    //     if (that.bookFile.length == 0 || that.bookImg.length == 0) {
+                    //         return;
+                    //     }
+                    // }
+                    if (that.bookFile.length == 0 || that.bookImg.length == 0) {
+                        return;
                     }
                     
                     // AJAX提交JSON:
                     vm.postData.thumbnail_url = vm.bookImg;
                     vm.postData.txt_url = vm.bookFile;
-                    if ($('#book_type').val() == '听书') {
-                        vm.postData.audio_url = vm.bookAudio;
-                    }
-                    console.log('🌹🌹🌹');
-                    console.log(JSON.stringify(vm.postData));
-                    console.log('🌹🌹🌹');
+                    // if ($('#book_type').val() == '听书') {
+                    //     vm.postData.audio_url = vm.bookAudio;
+                    // }
                     $.ajax({
                         type: 'post',
                         headers: {
@@ -64,24 +64,7 @@
                         url: '/api/addBook',
                         data: JSON.stringify(vm.postData)
                     }).done(function (res) {
-                        // r.data.thumbnail_url = r.data.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
-                        // if (r.data.thumbnail_url.indexOf('http') < 0) {
-                        //     r.data.thumbnail_url = '/images/' + r.data.thumbnail_url;
-                        // }
-                        // that.books.unshift(r.data);
                         if (res.code == 0) {
-                            // vm.postData = null;
-                            // vm.bookFile = '';
-                            // vm.bookImg = '';
-                            // vm.bookAudio = '';
-                            // $(":input", "#product-form")
-                            //     .not(":button", ":reset", "hidden", "submit")
-                            //     .val("")
-                            //     .removeAttr("checked")
-                            //     .removeAttr("selected");
-                            // $('#txtFile').fileinput('reset');
-                            // $('#createBtn').disabled = false;
-
                             $('#myModel').modal('show');
                             $('#myModel').find('.modal-body').text('创建成功！');
                         } else {
@@ -118,7 +101,7 @@
             if ($('#book_type').val() == '小说' || $('#book_type').val() == '请选择...') {
                 $('#audio_group').hide();
             } else if ($('#book_type').val() == '听书') {
-                $('#audio_group').show();
+                // $('#audio_group').show();
             } else if ($('#book_type').val() == '杂志') {
                 $('#audio_group').hide();
             } else if ($('#book_type').val() == '漫画') {
@@ -143,10 +126,12 @@
             } else if ($('#txtFile').val() == '') {
                 $('#myModel').modal('show');
                 $('#myModel').find('.modal-body').text('请添加图书txt文件');
-            } else if ($('#book_type').val() == '听书' && $('#audioFile').val() == '') {
-                $('#myModel').modal('show');
-                $('#myModel').find('.modal-body').text('请添加图书音频文件');
-            } else {
+            }
+            // else if ($('#book_type').val() == '听书' && $('#audioFile').val() == '') {
+            //     $('#myModel').modal('show');
+            //     $('#myModel').find('.modal-body').text('请添加图书音频文件');
+            // } 
+             else {
                 $('#myLoading').show();
                 $('#createBtn').attr('disabled', true);
                 vm.postData = {
@@ -171,9 +156,9 @@
                 }
                 $('#txtFile').fileinput('upload');
                 $('#thumbnail').fileinput('upload');
-                if ($('#book_type').val() == '听书') {
-                    $('#audioFile').fileinput('upload');
-                }
+                // if ($('#book_type').val() == '听书') {
+                //     $('#audioFile').fileinput('upload');
+                // }
             }
         });
 
@@ -260,46 +245,46 @@
         });
 
         // audio
-        $('#audioFile').fileinput({
-            showUpload: false,
-            previewFileType: 'any',
-            showPreview: false,
-            uploadUrl: 'uploadFile',
-            language: 'zh',
-            browseLabel: '浏览...',
-            browseClass: 'btn btn-outline-secondary',
-            removeClass: 'btn btn-danger',
-            allowedFileTypes: ['audio'], // 限制文件类型为图片
-            allowedFileExtensions: ['audio'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
-            maxFileCount: 1,  // 限制最多3张图片
-            // maxFileSize: 1024, // 限制图片大小，最大1024KB
-            // allowedPreviewTypes: ['image'], // 允许预览的文件类型
-            initialCaption: '添加图书音频文件', // 初始化说明框框，比如该项目上默认显示：可以选择最多3张图片，格式为png或者jpg，大小不超过1M
-            layoutTemplates: {
-                main1: '{preview}\n' +
-                    '<div class="input-group {class}">\n' +
-                    '   <div class="input-group-prepend">\n' +
-                    '       {browse}\n' +
-                    '       {remove}\n' +
-                    '   </div>\n' +
-                    '   {caption}\n' +
-                    '</div>',
-                footer: '<div class="file-thumbnail-footer">\n' +
-                    '    <div class="file-caption-name">{caption}{size}</div>\n' +
-                    '</div>'
-            }
-        });
-        $('#audioFile').on('filecleared', function (event) {
-            $('#audioFile').fileinput('refresh', { caption: '添加图书音频文件' });
-        });
-        $('#audioFile').on('fileerror', function (event, data, msg) {
-            console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
-        });
-        $('#audioFile').on('fileuploaded', function (event, data, previewId, index) {
-            console.log("🌹🌹fileuploaded🌹🌹" + JSON.stringify(data.response));
-            vm.bookAudio = data.response.data;
-            vm.sendForm(vm.postData);
-        });
+        // $('#audioFile').fileinput({
+        //     showUpload: false,
+        //     previewFileType: 'any',
+        //     showPreview: false,
+        //     uploadUrl: 'uploadFile',
+        //     language: 'zh',
+        //     browseLabel: '浏览...',
+        //     browseClass: 'btn btn-outline-secondary',
+        //     removeClass: 'btn btn-danger',
+        //     allowedFileTypes: ['audio'], // 限制文件类型为图片
+        //     allowedFileExtensions: ['audio'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
+        //     maxFileCount: 1,  // 限制最多3张图片
+        //     // maxFileSize: 1024, // 限制图片大小，最大1024KB
+        //     // allowedPreviewTypes: ['image'], // 允许预览的文件类型
+        //     initialCaption: '添加图书音频文件', // 初始化说明框框，比如该项目上默认显示：可以选择最多3张图片，格式为png或者jpg，大小不超过1M
+        //     layoutTemplates: {
+        //         main1: '{preview}\n' +
+        //             '<div class="input-group {class}">\n' +
+        //             '   <div class="input-group-prepend">\n' +
+        //             '       {browse}\n' +
+        //             '       {remove}\n' +
+        //             '   </div>\n' +
+        //             '   {caption}\n' +
+        //             '</div>',
+        //         footer: '<div class="file-thumbnail-footer">\n' +
+        //             '    <div class="file-caption-name">{caption}{size}</div>\n' +
+        //             '</div>'
+        //     }
+        // });
+        // $('#audioFile').on('filecleared', function (event) {
+        //     $('#audioFile').fileinput('refresh', { caption: '添加图书音频文件' });
+        // });
+        // $('#audioFile').on('fileerror', function (event, data, msg) {
+        //     console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
+        // });
+        // $('#audioFile').on('fileuploaded', function (event, data, previewId, index) {
+        //     console.log("🌹🌹fileuploaded🌹🌹" + JSON.stringify(data.response));
+        //     vm.bookAudio = data.response.data;
+        //     vm.sendForm(vm.postData);
+        // });
     });
 </script>
 
@@ -317,8 +302,14 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="#">
                             <span data-feather="file"></span>
-                            新建
+                            新建图书
                             <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/addArchive">
+                            <span data-feather="file"></span>
+                            新建资讯
                         </a>
                     </li>
                 </ul>
@@ -380,15 +371,15 @@
                                                 <option>小说</option>
                                                 <option>听书</option>
                                                 <!-- <option>杂志</option>
-                                            <option>漫画</option>
-                                            <option>资讯</option> -->
+                                                <option>漫画</option> -->
+                                                <!-- <option>资讯</option> -->
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="audio_group" style="display: none;">
+                                    <!-- <div class="form-group" id="audio_group" style="display: none;">
                                         <label for="audioFile" class="col-form-label">音频文件</label>
                                         <input type="file" class="form-control-file" name="file" id="audioFile" accept="audio/*">
-                                    </div>
+                                    </div> -->
                                     <div class="form-group">
                                         <label for="thumbnail" class="col-form-label">封面图片</label>
                                         <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
@@ -415,4 +406,7 @@
         </main>
     </div>
 </div>
+
+<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote.js"></script>
 {% endblock %}

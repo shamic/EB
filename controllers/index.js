@@ -8,5 +8,8 @@ module.exports = {
     },
     'GET /addBook': async (ctx, next) => {
         ctx.render('addBook.html');
+    },
+    'GET /addArchive': async (ctx, next) => {
+        ctx.render('addArchive.html');
     }
 };
