@@ -1,6 +1,10 @@
 {% extends "base2.html" %} {% block main %}
 
 <link rel="stylesheet" href="/static/css/fileinput.css">
+
+<script type="text/javascript" src="../static/js/summernote-bs4.min.js"></script>
+<script type="text/javascript" src="../static/lang/summernote-zh-CN.min.js"></script>
+
 <script src="/static/js/fileinput.js"></script>
 <script src="/static/js/locales/zh.js"></script>
 <script src="/static/js/vue.min.js"></script>
@@ -44,8 +48,14 @@
                     //         return;
                     //     }
                     // }
-                    if (that.bookFile.length == 0 || that.bookImg.length == 0) {
-                        return;
+                    if ($('#book_type').val() == '资讯') {
+                        if (that.bookImg.length == 0) {
+                            return;
+                        }
+                    } else {
+                        if (that.bookFile.length == 0 || that.bookImg.length == 0) {
+                            return;
+                        }
                     }
                     
                     // AJAX提交JSON:
@@ -96,18 +106,47 @@
         $("#category").change(function () {
             $('#category').css("border-color", "");
         });
+        
         $("#book_type").change(function () {
             $('#book_type').css("border-color", "");
             if ($('#book_type').val() == '小说' || $('#book_type').val() == '请选择...') {
                 $('#audio_group').hide();
+                $('#archive').hide();
+                $('#txtFileForm').show();
             } else if ($('#book_type').val() == '听书') {
                 // $('#audio_group').show();
+                $('#archive').hide();
+                $('#txtFileForm').show();
             } else if ($('#book_type').val() == '杂志') {
                 $('#audio_group').hide();
+                $('#archive').hide();
+                $('#txtFileForm').show();
             } else if ($('#book_type').val() == '漫画') {
                 $('#audio_group').hide();
+                $('#archive').hide();
+                $('#txtFileForm').show();
             } else if ($('#book_type').val() == '资讯') {
                 $('#audio_group').hide();
+                $('#txtFileForm').hide();
+                $('#archive').show();
+                $('#summernote').summernote({
+                    placeholder: '资讯内容...',
+                    tabsize: 2,
+                    height: 500,
+                    focus: true,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['undo', 'redo', 'codeview', 'help']]
+                    ],
+                    lang: 'zh-CN'
+                }); 
             }
         });
 
@@ -285,6 +324,8 @@
         //     vm.bookAudio = data.response.data;
         //     vm.sendForm(vm.postData);
         // });
+
+
     });
 </script>
 
@@ -306,12 +347,12 @@
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/addArchive">
-                            <span data-feather="file"></span>
+                            <span data-feather="archive"></span>
                             新建资讯
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </nav>
@@ -372,7 +413,7 @@
                                                 <option>听书</option>
                                                 <!-- <option>杂志</option>
                                                 <option>漫画</option> -->
-                                                <!-- <option>资讯</option> -->
+                                                <option>资讯</option>
                                             </select>
                                         </div>
                                     </div>
@@ -384,13 +425,18 @@
                                         <label for="thumbnail" class="col-form-label">封面图片</label>
                                         <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" id="txtFileForm">
                                         <label for="txtFile" class="col-form-label">图书txt文件</label>
                                         <input type="file" class="form-control-file" name="file" id="txtFile" accept=".txt">
                                     </div>
                                     <div class="form-group">
                                         <label class="col-form-label">简介</label>
                                         <textarea class="form-control" maxlength="500" placeholder="字数最多500" style="resize: vertical;" id="introduction" rows="3" required></textarea>
+                                    </div>
+                                    <div class="form-group" id="archive" style="display: none;">
+                                        <label class="col-form-label">资讯网页内容</label>
+                                        <div id="summernote">
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <button type="submit" id="createBtn" class="btn btn-primary" data-loading-text="提交中...">创建</button>

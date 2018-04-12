@@ -1,9 +1,10 @@
 {% extends "base2.html" %} {% block main %}
 
 <script src="/static/js/vue.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
@@ -17,7 +18,7 @@
         var vm = new Vue({
             el: '#product',
             data: {
-                
+
             },
             methods: {
                 isDate: function (str) {
@@ -36,12 +37,18 @@
                 showError: function (tips) {
                     $('#myAlert').show();
                     $('#myAlert')[0].innerText = tips;
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $('#myAlert').hide();
-                    }, 3000)    
+                    }, 3000)
                 }
             }
         });
+
+        $('#summernote').summernote({
+            placeholder: '资讯内容...',
+            tabsize: 2,
+            height: 500
+        });         
     });
 </script>
 
@@ -52,7 +59,7 @@
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="/home">
-                            <span data-feather="file"></span>
+                            <span data-feather="home"></span>
                             书库
                         </a>
                     </li>
@@ -62,27 +69,36 @@
                             新建图书
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link active" href="#">
                             <span data-feather="archive"></span>
                             新建资讯
                             <span class="sr-only">(current)</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </nav>
 
         <main id="product-list" role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <h1 style="margin-bottom: 20px;">资讯创建</h1>
-            <div id="summernote"><p>Hello Summernote</p></div>
-            <script>
-                $('#summernote').summernote({
-                    placeholder: 'Hello stand alone ui',
-                    tabsize: 2,
-                    height: 600
-                });
-            </script>
+            <!-- <h1 style="margin-bottom: 20px;">资讯创建</h1> -->
+            <div class="panel-body">
+                <form id="product-form">
+                    <div class="form-group col-md-8">
+                        <h2 class="col-form-label">标题</h2>
+                        <input type="text" maxlength="100" name="publisher" class="form-control" placeholder="标题(可选)" value="">
+                    </div>
+                    <div class="form-group col-md-8">
+                        <h2 class="col-form-label">内容</h2>
+                        <div id="summernote">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <button type="submit" id="createBtn" class="btn btn-primary" data-loading-text="提交中...">创建</button>
+                        <img id="myLoading" src="../static/images/loading.gif" style="display: none;height: 30px;width: 30px;margin-left: 10px;">
+                    </div>
+                </form>
+            </div>
         </main>
     </div>
 </div>
