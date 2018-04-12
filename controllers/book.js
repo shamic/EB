@@ -1,5 +1,7 @@
 const model = require('../model');
 const logger = require('../logger.js');
+const fs = require('fs');
+const path = require('path');
 
 let Books = model.Books;
 
@@ -23,7 +25,7 @@ module.exports = {
             element.thumbnail_url = element.thumbnail_url || "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522478341968&di=c60886853463d9f62c8c49d6fe270426&imgtype=0&src=http%3A%2F%2Fwww.memobook.com.tw%2Fsaved%2F13%2F131210%2F13121009462755%2Fthumb%2Fp8_GK5DYP_1.jpg";
             element.rating = element.rating || "--";
         });
-        logger.info(`find ${books.length} books:`);
+        logger.info('find ${books.length} books:');
         // for (let book of books) {
         //     console.log(JSON.stringify(book));
         // }
@@ -58,6 +60,54 @@ module.exports = {
         } else if (typeDesc == '资讯') {
             type = 5;
         }
+
+        var txtUrl = ctx.request.body.txt_url || null;
+
+        if (type == 5) {
+            var title = ctx.request.body.name;
+            var fileName = ctx.request.body.name + '.html';
+            var publisher = ctx.request.body.publisher || 'EB';
+            var publisher_date = ctx.request.body.publisher_date || '';
+            var body_content = ctx.request.body.htmlText || '';
+            var data = '<!doctype html>' +
+            '<html lang="zh-CN">' +
+            '<head>' +
+                '<meta charset="utf-8">' +
+                '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">' +
+                '<meta name="description" content="">' +
+                '<meta name="author" content="">' +
+                '<link rel="icon" href="../../../../favicon.ico">' +
+                '<title>' + title + '</title>' +
+                '<!-- Bootstrap core CSS -->' +
+                '<link rel="stylesheet" href="../static/css/bootstrap.css">' +
+            '</head>' +
+            '<body style="width:100%;">' +
+                '<div style="margin: 1.8rem;font-size: 1.3rem;">' +
+                    '<div class="article-title">' +
+                        '<h1>' + title + '</h1>' +
+                    '</div>' +
+                    '<div style="margin: 1.0rem 0;color:#999999;">' +
+                        '<span class="source">' + publisher + '</span>' +
+                        '<span class="date" style="margin-left: 10px;">' + publisher_date + '</span>' +
+                    '</div>' +
+                    body_content +
+                '</div>' +
+            '</body>' +
+            '</html>';
+            fs.writeFileSync(path.join(__dirname, '../') + '/archives/' + fileName, data);
+            // fs.writeFile('../archives/' + fileName, data, function (err) {
+            //     if (err) {
+            //         ctx.rest({
+            //             code: -1,
+            //             msg: '保存咨询文件失败'
+            //         });
+            //         return
+            //     } else {
+                    txtUrl = fileName;
+            //     }
+            // });
+        }
+
         var book = await Books.create({
             name: ctx.request.body.name, 
             author: ctx.request.body.author, 
@@ -69,7 +119,7 @@ module.exports = {
             introduction: ctx.request.body.introduction,
             thumbnail_url:  ctx.request.body.thumbnail_url || null,
             audio_url:  ctx.request.body.audio_url || null,
-            txt_url:  ctx.request.body.txt_url || null,
+            txt_url:  txtUrl,
             visits: parseInt(ctx.request.body.visits) || null, 
             price: parseFloat(ctx.request.body.price) || null,
             was_price: parseFloat(ctx.request.body.was_price) || null,

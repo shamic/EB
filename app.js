@@ -29,6 +29,7 @@ app.use(err());
 let staticFiles = require('./static-files');
 app.use(staticFiles('/static/', __dirname + '/static'));
 app.use(staticFiles('/images/', __dirname + '/images'));
+app.use(staticFiles('/archives/', __dirname + '/archives'));
 
 // parse request body:
 app.use(bodyParser());
