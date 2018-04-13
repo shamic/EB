@@ -2,6 +2,7 @@ const model = require('../model');
 const logger = require('../logger.js');
 const fs = require('fs');
 const path = require('path');
+const uuid = require('node-uuid');
 
 let Books = model.Books;
 
@@ -14,7 +15,7 @@ module.exports = {
                 code: ctx.auth.code,
                 msg: ctx.auth.message
             })
-            return
+            return;
         }
         var pageSize = parseInt(ctx.request.body.pageSize) || 20;
         var start = parseInt(ctx.request.body.start) || 0;
@@ -65,7 +66,7 @@ module.exports = {
 
         if (type == 5) {
             var title = ctx.request.body.name;
-            var fileName = ctx.request.body.name + '.html';
+            var fileName = uuid.v1() + '.html';
             var publisher = ctx.request.body.publisher || 'EB';
             var publisher_date = ctx.request.body.publisher_date || '';
             var body_content = ctx.request.body.htmlText || '';
@@ -95,17 +96,7 @@ module.exports = {
             '</body>' +
             '</html>';
             fs.writeFileSync(path.join(__dirname, '../') + '/archives/' + fileName, data);
-            // fs.writeFile('../archives/' + fileName, data, function (err) {
-            //     if (err) {
-            //         ctx.rest({
-            //             code: -1,
-            //             msg: '保存咨询文件失败'
-            //         });
-            //         return
-            //     } else {
-                    txtUrl = fileName;
-            //     }
-            // });
+            txtUrl = fileName;
         }
 
         var book = await Books.create({
@@ -141,14 +132,34 @@ module.exports = {
                 code: ctx.auth.code,
                 msg: ctx.auth.message
             })
-            return
+            return;
         }
 
         var bookId = ctx.request.body.bookId;
+        const findedBook = await Books.findOne({'where':{'id':bookId}});
+        if (!findedBook) {
+            ctx.rest({
+                code: -1,
+                msg: '找不到该书本'
+            })
+            return;
+        }
+
+        // 删除书籍信息
         var result = await Books.destroy({'where':{'id':bookId}});
         
         if (result > 0) {
             logger.info('deleted book: ' + JSON.stringify(bookId));
+            var imagePath = path.join(__dirname, '../') + '/images/' + findedBook.thumbnail_url;
+            fs.unlinkSync(imagePath);
+            if (findedBook.type == 5) {
+                var txtHtmlPath = path.join(__dirname, '../') + '/archives/' + findedBook.txt_url;
+                fs.unlinkSync(txtHtmlPath);
+            } else {
+                var txtFilePath = path.join(__dirname, '../') + '/uploads/' + findedBook.txt_url;
+                fs.unlinkSync(txtFilePath);
+            }
+
             ctx.rest({
                 data: bookId
             });

@@ -341,3 +341,5 @@ response:
 图片地址：
 http://193.112.90.119:8080/images/ + imgName(eg. 'banner1.jpg')
 
+资讯地址：
+http://193.112.90.119:8080/archives/ + txt_url(eg. 'xw1.html')

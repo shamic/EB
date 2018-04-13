@@ -138,7 +138,7 @@ module.exports = {
             ]
         }
         var itemList = []
-        for (var i = 1; i < 5; i++) {
+        for (var i = 1; i < 6; i++) {
             var resutl = await Books.findAll({limit: 3, order: 'createdAt asc', where: {type: i}});
             if (resutl && resutl.length > 0) {
                 var des = '';
@@ -149,11 +149,14 @@ module.exports = {
                 case 2:
                     des = '听书';
                     break;
-                case 2:
+                case 3:
                     des = '杂志';
                     break;
-                case 2:
+                case 4:
                     des = '动漫';
+                    break;
+                case 5:
+                    des = '资讯';
                     break;
                 default:
                     des = '小说';
