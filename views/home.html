@@ -510,7 +510,7 @@
                                     <span v-if="p.rating" style="font-size:14px;">分
                                 </p> -->
                                 <p class="btn-group" role="group" aria-label="operate" style="position: absolute;top: 50%;transform: translateY(-50%);">
-                                    <button type="button" class="btn btn-link btn-sm" v-on:click="editBook(p)">编辑</button>
+                                    <button type="button" class="btn btn-link btn-sm" v-on:click="editBook(p)" v-if="p.type != 5">编辑</button>
                                     <button type="button" class="btn btn-link btn-sm" v-on:click="deleteBook(p.id)">删除</button>
                                 </p>
                             </td>
