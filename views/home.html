@@ -98,7 +98,7 @@
                             for (var attr in that.editedBook) {
                                 that.editedBook[attr] = that.editedBookCopy[attr];
                                 if (attr == 'thumbnail_url'  && that.thumbnailChanged) {
-                                    that.editedBook[attr] = vm.bookImg;
+                                    that.editedBook[attr] = '/images/' + vm.bookImg;
                                 }
                                 if (attr == 'txt_url'  && that.txtFileChanged) {
                                     that.editedBook[attr] = vm.bookFile;
@@ -344,15 +344,15 @@
         $("#book_type").change(function () {
             $('#book_type').css("border-color", "");
             if ($('#book_type').val() == '小说' || $('#book_type').val() == '请选择...') {
-                vm.editedBook.type = 1;
+                vm.editedBookCopy.type = 1;
             } else if ($('#book_type').val() == '听书') {
-                vm.editedBook.type = 2;
+                vm.editedBookCopy.type = 2;
             } else if ($('#book_type').val() == '杂志') {
-                vm.editedBook.type = 3;
+                vm.editedBookCopy.type = 3;
             } else if ($('#book_type').val() == '漫画') {
-                vm.editedBook.type = 4;
+                vm.editedBookCopy.type = 4;
             } else if ($('#book_type').val() == '资讯') {
-                vm.editedBook.type = 5;
+                vm.editedBookCopy.type = 5;
             }
         });
 
@@ -390,6 +390,10 @@
         });
         $('#txtFile').on('fileerror', function (event, data, msg) {
             console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
+        });
+        $('#txtFile').on('change', function(event) {
+            console.log("txtFile change");
+            vm.editedBookCopy.txt_url = 'changed';
         });
         $('#txtFile').on('fileuploaded', function (event, data, previewId, index) {
             console.log('🌹🌹fileuploaded🌹🌹' + JSON.stringify(data.response));
@@ -431,6 +435,10 @@
         });
         $('#thumbnail').on('fileerror', function (event, data, msg) {
             console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
+        });
+        $('#thumbnail').on('change', function(event) {
+            console.log("thumbnail change");
+            vm.editedBookCopy.thumbnail_url = 'changed';
         });
         $('#thumbnail').on('fileuploaded', function (event, data, previewId, index) {
             console.log("🌹🌹fileuploaded🌹🌹" + JSON.stringify(data.response));

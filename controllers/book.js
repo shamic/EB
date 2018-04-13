@@ -191,28 +191,9 @@ module.exports = {
         var updateValues = {};
         for (var attr in obj) {
             if (obj[attr]) {
-                if (attr == 'type') {
-                    var type = 1;
-                    var typeDesc = obj[attr];
-                    if (typeDesc == '小说') {
-                        type = 1;
-                    } else if (typeDesc == '听书') {
-                        type = 2;
-                    } else if (typeDesc == '杂志') {
-                        type = 3;
-                    } else if (typeDesc == '漫画') {
-                        type = 4;
-                    } else if (typeDesc == '资讯') {
-                        type = 5;
-                    }
-                    updateValues[attr] = type;
-                } else {
-                    updateValues[attr] = obj[attr];
-                }
+                updateValues[attr] = obj[attr];
             }
         }
-        updateValues['updatedAt'] = new Date();
-        updateValues['version'] = findedBook.version + 1;
         console.log('need to update values: \n' + JSON.stringify(updateValues));
 
         var result = await Books.update(updateValues, {'where':{'id':bookId}});
