@@ -12,27 +12,6 @@ let Books = model.Books;
 const APIError = require('../rest').APIError;
 
 module.exports = {
-    // 'GET /api/products': async (ctx, next) => {
-    //     ctx.rest({
-    //         data: products.getProducts()
-    //     });
-    // },
-
-    // 'POST /api/products': async (ctx, next) => {
-    //     var p = products.createProduct(ctx.request.body.name, ctx.request.body.manufacturer, parseFloat(ctx.request.body.price));
-    //     ctx.rest({data: p});
-    // },
-
-    // 'DELETE /api/products/:id': async (ctx, next) => {
-    //     console.log(`delete product ${ctx.params.id}...`);
-    //     var p = products.deleteProduct(ctx.params.id);
-    //     if (p) {
-    //         ctx.rest(p);
-    //     } else {
-    //         throw new APIError('product:not_found', 'product not found by id.');
-    //     }
-    // },
-
     'POST /api/login': async (ctx, next) => {
         var email = ctx.request.body.email;
         var password = ctx.request.body.password;
@@ -58,15 +37,13 @@ module.exports = {
             } else {
                 ctx.rest({
                     code: -102,
-                    msg: '用户名或密码错误',
-                    data: null
+                    msg: '用户名或密码错误'
                 });
             }
         } else {
             ctx.rest({
                 code: -101,
-                msg: '用户不存在',
-                data: null
+                msg: '用户不存在'
             });
         }
     },
@@ -74,6 +51,15 @@ module.exports = {
     'POST /api/createUser': async (ctx, next) => {
         var email = ctx.request.body.email;
         var password = ctx.request.body.password;
+
+        var mCode = ctx.request.body.mCode;
+        if (mCode != 'hello man') {
+            ctx.rest({
+                code: -1,
+                msg: '参数错误'
+            });
+            return;
+        }
 
         if (password && email) {
             const existUser = await User.findOne({
@@ -84,8 +70,7 @@ module.exports = {
             if (existUser) {
                 ctx.rest({
                     code: -101,
-                    msg: '用户名已经存在',
-                    data: null
+                    msg: '用户名已经存在'
                 });
             } else {
                 // 密码加密
@@ -118,9 +103,22 @@ module.exports = {
         } else {
             ctx.rest({
                 code: -1,
-                msg: '参数错误',
-                data: null
+                msg: '参数错误'
             });
+        }
+    },
+
+    'POST /api/checkAuth': async (ctx, next) => {
+        if (ctx.auth && ctx.auth.code != 0) {
+            ctx.rest({
+                code: ctx.auth.code,
+                msg: ctx.auth.message
+            })
+            return
+        } else {
+            ctx.rest({
+                data: {auth: 'success'}
+            })
         }
     },
 

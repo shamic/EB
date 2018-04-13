@@ -167,4 +167,71 @@ module.exports = {
             throw new APIError('book deleted:fail', 'deleted book fail.');
         }
     },
+
+    'POST /api/editBook': async (ctx, next) => {
+        if (ctx.auth && ctx.auth.code != 0) {
+            ctx.rest({
+                code: ctx.auth.code,
+                msg: ctx.auth.message
+            })
+            return;
+        }
+
+        var bookId = ctx.request.body.bookId;
+        const findedBook = await Books.findOne({'where':{'id':bookId}});
+        if (!findedBook) {
+            ctx.rest({
+                code: -1,
+                msg: '找不到该书本'
+            })
+            return;
+        }
+
+        var obj = ctx.request.body;
+        var updateValues = {};
+        for (var attr in obj) {
+            if (obj[attr]) {
+                if (attr == 'type') {
+                    var type = 1;
+                    var typeDesc = obj[attr];
+                    if (typeDesc == '小说') {
+                        type = 1;
+                    } else if (typeDesc == '听书') {
+                        type = 2;
+                    } else if (typeDesc == '杂志') {
+                        type = 3;
+                    } else if (typeDesc == '漫画') {
+                        type = 4;
+                    } else if (typeDesc == '资讯') {
+                        type = 5;
+                    }
+                    updateValues[attr] = type;
+                } else {
+                    updateValues[attr] = obj[attr];
+                }
+            }
+        }
+        updateValues['updatedAt'] = new Date();
+        updateValues['version'] = findedBook.version + 1;
+        console.log('need to update values: \n' + JSON.stringify(updateValues));
+
+        var result = await Books.update(updateValues, {'where':{'id':bookId}});
+        if (result[0] > 0) {
+            logger.info('update book: ' + JSON.stringify(bookId));
+            if (updateValues.thumbnail_url && findedBook.thumbnail_url) {
+                var imagePath = path.join(__dirname, '../') + '/images/' + findedBook.thumbnail_url;
+                fs.unlinkSync(imagePath);
+            }
+            if (updateValues.txt_url && findedBook.txt_url) {
+                var txtFilePath = path.join(__dirname, '../') + '/uploads/' + findedBook.txt_url;
+                fs.unlinkSync(txtFilePath);
+            }
+
+            ctx.rest({
+                data: bookId
+            });
+        } else {
+            throw new APIError('book updated:fail', 'updated book fail.');
+        }
+    },
 }

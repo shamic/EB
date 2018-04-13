@@ -13,7 +13,22 @@
     $(function () {
 
         var bean = JSON.parse(localStorage.getItem('bean'));
-        // console.log(JSON.stringify(bean));
+        $.ajax({
+            type: 'post',
+            headers: {
+                'Authorization': 'Bearer ' + bean.token
+            },
+            dataType: 'json',
+            contentType: 'application/json',
+            url: '/api/checkAuth'
+        }).done(function (res) {
+            if (res.code != 0) {
+                $('#myModel').modal('show');
+                $('#myModel').find('.modal-body').text(res.msg);
+            }
+        }).fail(function (jqXHR, textStatus) {
+            alert('Error: ' + jqXHR.status);
+        });
 
         var vm = new Vue({
             el: '#product-list',
@@ -82,6 +97,7 @@
                 }
             }
         });
+        
         $('#myModel').on('hidden.bs.modal', function (e) {
             var modal_body_text = $('#myModel').find('.modal-body')[0].innerText;
             if (modal_body_text == '创建成功！') {

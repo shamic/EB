@@ -22,7 +22,9 @@
                 editedBook: {},
                 postData: null,
                 bookFile: '',
-                bookImg: ''
+                bookImg: '',
+                thumbnailChanged: true,
+                txtFileChanged: true
             },
             methods: {
                 isDate: function (str) {
@@ -38,23 +40,44 @@
                     return true;
                 },
 
+                resetEditData: function () {
+                    this.editedBookCopy = {};
+                    this.postData = null;
+                    this.bookFile = '';
+                    this.bookImg = '';
+                    this.thumbnailChanged = true;
+                    this.txtFileChanged = true;
+                },
+
                 showError: function (tips) {
                     $('#myAlert').show();
                     $('#myAlert')[0].innerText = tips;
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $('#myAlert').hide();
-                    }, 3000)    
+                    }, 3000)
                 },
 
                 sendForm: function (postData) {
                     var that = this;
-                    if (that.bookFile.length == 0 || that.bookImg.length == 0) {
+                    if (that.thumbnailChanged && that.txtFileChanged) {
+                        if (that.bookFile.length == 0 || that.bookImg.length == 0) {
+                            return;
+                        }
+                    }
+                    if (that.thumbnailChanged && that.bookImg.length == 0) {
+                        return;
+                    }
+                    if (that.txtFileChanged && that.bookFile.length == 0) {
                         return;
                     }
 
                     // AJAX提交JSON:
-                    vm.postData.thumbnail_url = vm.bookImg;
-                    vm.postData.txt_url = vm.bookFile;
+                    if (that.thumbnailChanged) {
+                        vm.postData.thumbnail_url = vm.bookImg;
+                    }
+                    if (that.txtFileChanged) {
+                        vm.postData.txt_url = vm.bookFile;
+                    }
                     $.ajax({
                         type: 'post',
                         headers: {
@@ -62,7 +85,7 @@
                         },
                         dataType: 'json',
                         contentType: 'application/json',
-                        url: '/api/updateBook',
+                        url: '/api/editBook',
                         data: JSON.stringify(vm.postData)
                     }).done(function (res) {
                         $('#myLoading').hide();
@@ -72,14 +95,26 @@
                         if (res.code == 0) {
                             $('#myModel').modal('show');
                             $('#myModel').find('.modal-body').text('更新成功！');
+                            for (var attr in that.editedBook) {
+                                that.editedBook[attr] = that.editedBookCopy[attr];
+                                if (attr == 'thumbnail_url'  && that.thumbnailChanged) {
+                                    that.editedBook[attr] = vm.bookImg;
+                                }
+                                if (attr == 'txt_url'  && that.txtFileChanged) {
+                                    that.editedBook[attr] = vm.bookFile;
+                                }
+                            }
                         } else {
                             $('#myModel').modal('show');
                             $('#myModel').find('.modal-body').text(res.msg);
                         }
+                        that.resetEditData();
                     }).fail(function (jqXHR, textStatus) {
                         // Not 200:
                         $('#myLoading').hide();
                         $('#updateBookBtn').attr('disabled', false);
+                        $('#editBookModal').modal('hide');
+                        that.resetEditData();
                         alert('Error: ' + jqXHR.status);
                     });
                 },
@@ -128,39 +163,52 @@
 
                     if ($('#category').val() == '请选择...') {
                         $('#category').css("border-color", "red");
-                    } else if ($('#book_type').val() == '请选择...') {
+                    }
+                    if ($('#book_type').val() == '请选择...') {
                         $('#book_type').css("border-color", "red");
-                    } else if ($('#publisher_date').val().length > 0 && !vm.isDate($('#publisher_date').val())) {
+                    }
+                    if ($('#publisher_date').val().length > 0 && !vm.isDate($('#publisher_date').val())) {
                         that.showError('时间格式不正确，格式如：2018-02-26')
-                    } else if ($('#thumbnail').val() == '') {
-                        // $('#myAlert').show(); 请添加图书封面图
-                    } else if ($('#txtFile').val() == '') {
-                        // $('#myAlert').show(); 请添加图书txt文件
-                    } else {
-                        $('#myLoading').show();
-                        $('#updateBookBtn').attr('disabled', true);
-                        vm.postData = {
-                            name: $(this).find('input[name=name]').val(),
-                            author: $(this).find('input[name=author]').val(),
-                            introduction: $('#introduction').val(),
-                            category: $('#category').val(),
-                            type: $('#book_type').val()
-                        };
-                        var publisher = $(this).find('input[name=publisher]').val();
-                        var publisherDate = $(this).find('input[name=publisher_date]').val();
-                        var wordsNum = $(this).find('input[name=words_num]').val();
+                    }
+                    if ($('#thumbnail').val() == '') {
+                        that.thumbnailChanged = false;
+                    }
+                    if ($('#txtFile').val() == '') {
+                        that.txtFileChanged = false;
+                    }
 
-                        if (publisher.length > 0) {
-                            vm.postData.publisher = publisher;
-                        }
-                        if (publisherDate.length > 0) {
-                            vm.postData.publisher_date = publisherDate;
-                        }
-                        if (wordsNum.length > 0) {
-                            vm.postData.words_num = wordsNum;
-                        }
-                        // $('#txtFile').fileinput('upload');
-                        // $('#thumbnail').fileinput('upload');
+                    $('#myLoading').show();
+                    $('#updateBookBtn').attr('disabled', true);
+                    vm.postData = {
+                        bookId: that.editedBookCopy.id,
+                        name: that.editedBookCopy.name,
+                        author: that.editedBookCopy.author,
+                        introduction: that.editedBookCopy.introduction,
+                        category: that.editedBookCopy.category,
+                        type: that.editedBookCopy.type
+                    };
+                    var publisher = that.editedBookCopy.publisher;
+                    var publisherDate = that.editedBookCopy.publisher_date;
+                    var wordsNum = that.editedBookCopy.words_num;
+
+                    if (publisher && publisher.length > 0) {
+                        vm.postData.publisher = publisher;
+                    }
+                    if (publisherDate && publisherDate.length > 0) {
+                        vm.postData.publisher_date = publisherDate;
+                    }
+                    if (wordsNum && wordsNum.length > 0) {
+                        vm.postData.words_num = wordsNum;
+                    }
+
+                    if (that.thumbnailChanged) {
+                        $('#thumbnail').fileinput('upload');
+                    }
+                    if (that.txtFileChanged) {
+                        $('#txtFile').fileinput('upload');
+                    }
+                    if (!that.thumbnailChanged && !that.txtFileChanged) {
+                        vm.sendForm(vm.postData);
                     }
                 },
 
@@ -494,7 +542,8 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">书名</label>
-                                        <input v-model="editedBookCopy.name" type="text" maxlength="100" name="name" class="form-control" placeholder="书名" value="" required>
+                                        <input v-model="editedBookCopy.name" type="text" maxlength="100" name="name" class="form-control" placeholder="书名" value=""
+                                            required>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">作者</label>
@@ -515,8 +564,8 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label class="col-form-label">字数(可选)</label>
-                                        <input v-model="editedBookCopy.words_num" type="text" maxlength="11" name="words_num" class="form-control" placeholder="字数" value=""
-                                            onkeyup="value=value.replace(/[^\d]/g,'')">
+                                        <input v-model="editedBookCopy.words_num" type="text" maxlength="11" name="words_num" class="form-control" placeholder="字数"
+                                            value="" onkeyup="value=value.replace(/[^\d]/g,'')">
                                     </div>
                                 </div>
                                 <div class="form-row">
