@@ -108,7 +108,6 @@
                     that.editedBookCopy = editObj;
                     $('#thumbnail').fileinput('refresh', { msgPlaceholder: editObj.thumbnail_url.substring(8) });
                     $('#txtFile').fileinput('refresh', { msgPlaceholder: editObj.txt_url });
-                    $('#audioFile').fileinput('refresh', { msgPlaceholder: editObj.audio_url });
 
                     $('#editBookModal').modal('show');
                 },
@@ -162,9 +161,6 @@
                         }
                         // $('#txtFile').fileinput('upload');
                         // $('#thumbnail').fileinput('upload');
-                        // if ($('#book_type').val() == '听书') {
-                        //     $('#audioFile').fileinput('upload');
-                        // }
                     }
                 },
 
@@ -300,18 +296,14 @@
         $("#book_type").change(function () {
             $('#book_type').css("border-color", "");
             if ($('#book_type').val() == '小说' || $('#book_type').val() == '请选择...') {
-                $('#audio_group').hide();
                 vm.editedBook.type = 1;
             } else if ($('#book_type').val() == '听书') {
                 vm.editedBook.type = 2;
             } else if ($('#book_type').val() == '杂志') {
-                $('#audio_group').hide();
                 vm.editedBook.type = 3;
             } else if ($('#book_type').val() == '漫画') {
-                $('#audio_group').hide();
                 vm.editedBook.type = 4;
             } else if ($('#book_type').val() == '资讯') {
-                $('#audio_group').hide();
                 vm.editedBook.type = 5;
             }
         });
@@ -397,49 +389,6 @@
             vm.bookImg = data.response.data;
             vm.sendForm(vm.postData);
         });
-
-        // audio
-        $('#audioFile').fileinput({
-            showUpload: false,
-            previewFileType: 'any',
-            showPreview: false,
-            uploadUrl: 'uploadFile',
-            language: 'zh',
-            browseLabel: '浏览...',
-            browseClass: 'btn btn-outline-secondary',
-            removeClass: 'btn btn-danger',
-            allowedFileTypes: ['audio'], // 限制文件类型为图片
-            allowedFileExtensions: ['audio'], // 限制文件后缀名为['image', 'html', 'text', 'video', 'audio', 'flash', 'object']
-            maxFileCount: 1,  // 限制最多3张图片
-            // maxFileSize: 1024, // 限制图片大小，最大1024KB
-            // allowedPreviewTypes: ['image'], // 允许预览的文件类型
-            initialCaption: '添加图书音频文件', // 初始化说明框框，比如该项目上默认显示：可以选择最多3张图片，格式为png或者jpg，大小不超过1M
-            layoutTemplates: {
-                main1: '{preview}\n' +
-                    '<div class="input-group {class}">\n' +
-                    '   <div class="input-group-prepend">\n' +
-                    '       {browse}\n' +
-                    '       {remove}\n' +
-                    '   </div>\n' +
-                    '   {caption}\n' +
-                    '</div>',
-                footer: '<div class="file-thumbnail-footer">\n' +
-                    '    <div class="file-caption-name">{caption}{size}</div>\n' +
-                    '</div>'
-            }
-        });
-        $('#audioFile').on('filecleared', function (event) {
-            $('#audioFile').fileinput('refresh', { caption: '添加图书音频文件' });
-        });
-        $('#audioFile').on('fileerror', function (event, data, msg) {
-            console.log(JSON.stringify(data) + '🌹🌹🌹🌹🌹' + JSON.stringify(msg));
-        });
-        $('#audioFile').on('fileuploaded', function (event, data, previewId, index) {
-            console.log("🌹🌹fileuploaded🌹🌹" + JSON.stringify(data.response));
-            vm.bookAudio = data.response.data;
-            vm.sendForm(vm.postData);
-        });
-
     });
 </script>
 
@@ -594,10 +543,6 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- <div class="form-group" id="audio_group" style="display: none;">
-                                    <label for="audioFile" class="col-form-label">音频文件</label>
-                                    <input type="file" class="form-control-file" name="file" id="audioFile" accept="audio/*">
-                                </div> -->
                                 <div class="form-group">
                                     <label for="thumbnail" class="col-form-label">封面图片</label>
                                     <input type="file" class="form-control-file" name="file" id="thumbnail" accept="image/*">
